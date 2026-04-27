@@ -24,7 +24,7 @@ export function RoleBanner({ isGhost }: RoleBannerProps) {
   return (
     <div
       className={`fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-md transition-opacity duration-700 font-mono ${
-        isGhost ? "bg-[#09090b]/95" : "bg-[#09090b]/95"
+        isGhost ? "bg-surface-deep/95" : "bg-surface-deep/95"
       }`}
       onClick={() => setVisible(false)}
     >
@@ -32,36 +32,36 @@ export function RoleBanner({ isGhost }: RoleBannerProps) {
         <div
           className={`inline-flex items-center justify-center w-32 h-32 rounded-full mb-8 relative ${
             isGhost
-              ? "bg-[#ef4444]/10 border border-[#ef4444]/50 shadow-[0_0_40px_rgba(239,68,68,0.3)]"
-              : "bg-[#6d28d9]/10 border border-[#6d28d9]/50 shadow-[0_0_40px_rgba(109,40,217,0.3)]"
+              ? "bg-ghost/10 border border-ghost/50 shadow-ghost-strong"
+              : "bg-accent/10 border border-accent/50 shadow-accent-strong"
           }`}
         >
           {isGhost ? (
-            <Ghost size={64} className="text-[#ef4444] drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+            <Ghost size={64} className="text-ghost glow-ghost-strong" />
           ) : (
-            <Shield size={64} className="text-[#c084fc] drop-shadow-[0_0_10px_rgba(192,132,252,0.8)]" />
+            <Shield size={64} className="text-accent-glow glow-accent-strong" />
           )}
         </div>
 
         <h2
           className={`text-4xl font-black uppercase tracking-[0.2em] mb-6 ${
             isGhost 
-              ? "text-[#ef4444] drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" 
-              : "text-[#c084fc] drop-shadow-[0_0_10px_rgba(192,132,252,0.5)]"
+              ? "text-ghost glow-ghost-strong" 
+              : "text-accent-glow glow-accent-strong"
           }`}
         >
           {isGhost ? "You are the Ghost" : "You are an Engineer"}
         </h2>
 
-        <div className="bg-[#18181b]/50 border border-[#27272a]/50 p-4 rounded-sm shadow-xl">
-          <p className="text-[13px] text-[#a1a1aa] leading-relaxed uppercase tracking-wider">
+        <div className="bg-surface/50 border border-border/50 p-4 rounded-sm shadow-xl">
+          <p className="text-[13px] text-text-muted leading-relaxed uppercase tracking-wider">
             {isGhost
               ? "Sabotage the system. Use your abilities to raise paranoia and prevent the engineers from fixing the bugs."
               : "Fix the 5 bugs in the codebase before time runs out. Watch out for the Ghost."}
           </p>
         </div>
 
-        <p className="text-[10px] font-bold text-[#52525b] mt-8 uppercase tracking-[0.3em] animate-pulse">
+        <p className="text-[10px] font-bold text-text-faint mt-8 uppercase tracking-[0.3em] animate-pulse">
           Click anywhere to initialize
         </p>
       </div>

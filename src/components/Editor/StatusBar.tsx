@@ -23,24 +23,24 @@ export function StatusBar() {
   ).length;
 
   return (
-    <div className="h-8 bg-[#09090b] border-t border-[#6d28d9]/50 flex items-center px-4 text-[10px] text-[#a1a1aa] shrink-0 font-mono uppercase tracking-widest shadow-[0_-5px_15px_rgba(109,40,217,0.05)] z-20 relative">
+    <div className="h-8 bg-surface-deep border-t border-accent/50 flex items-center px-4 text-[10px] text-text-muted shrink-0 font-mono uppercase tracking-widest shadow-accent z-20 relative">
       <div className="flex items-center gap-6">
         {/* Git branch */}
-        <div className="flex items-center gap-1.5 hover:text-[#a78bfa] transition-colors cursor-default">
-          <GitBranch size={12} className="text-[#6d28d9]" />
+        <div className="flex items-center gap-1.5 hover:text-accent-soft transition-colors cursor-default">
+          <GitBranch size={12} className="text-accent" />
           <span>main</span>
         </div>
 
         {/* Errors */}
         {errorCount > 0 && (
-          <div className="flex items-center gap-1.5 text-red-400 drop-shadow-[0_0_3px_rgba(248,113,113,0.5)]">
+          <div className="flex items-center gap-1.5 text-red-400 glow-ghost-light">
             <AlertTriangle size={12} />
             <span>{errorCount} ERRORS</span>
           </div>
         )}
 
         {/* Fixed tasks */}
-        <div className="flex items-center gap-1.5 text-[#86efac]">
+        <div className="flex items-center gap-1.5 text-success-light">
           <CheckCircle2 size={12} />
           <span>
             {fixedCount}/{totalCount} FIXED
@@ -55,10 +55,10 @@ export function StatusBar() {
             <span
               className={`transition-colors ${
                 paranoiaMeter > 70
-                  ? "text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)] font-bold animate-pulse"
+                  ? "text-red-500 glow-ghost-strong font-bold animate-pulse"
                   : paranoiaMeter > 40
-                    ? "text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]"
-                    : "text-[#d4d4d8]"
+                    ? "text-yellow-400 glow-warning"
+                    : "text-text-secondary"
               }`}
             >
               PARANOIA: {paranoiaMeter.toFixed(0)}%
@@ -67,18 +67,18 @@ export function StatusBar() {
         )}
 
         {/* Players online */}
-        <div className="flex items-center gap-1.5 hover:text-[#e4e4e7] transition-colors">
-          <Wifi size={12} className="text-[#6d28d9]" />
+        <div className="flex items-center gap-1.5 hover:text-text-primary transition-colors">
+          <Wifi size={12} className="text-accent" />
           <span>{onlineCount} ONLINE</span>
         </div>
 
         {/* File info */}
-        <span className="text-[#71717a]">
+        <span className="text-text-subtle">
           {activeTab.endsWith(".tsx") ? "TSX" : "TS"}
         </span>
-        <span className="text-[#71717a]">UTF-8</span>
+        <span className="text-text-subtle">UTF-8</span>
 
-        <Bell size={12} className="text-[#71717a] hover:text-[#a78bfa] transition-colors cursor-pointer" />
+        <Bell size={12} className="text-text-subtle hover:text-accent-soft transition-colors cursor-pointer" />
       </div>
     </div>
   );

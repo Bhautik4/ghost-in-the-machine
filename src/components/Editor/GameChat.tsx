@@ -112,12 +112,12 @@ export function GameChat() {
           setIsOpen(true);
           setUnread(0);
         }}
-        className="absolute bottom-48 right-4 z-40 flex items-center gap-2 px-3 py-2 bg-[#09090b]/90 backdrop-blur-md border border-[#27272a]/50 rounded-sm text-[10px] text-[#71717a] hover:text-[#a78bfa] hover:border-[#6d28d9]/50 transition-all shadow-lg font-mono uppercase tracking-widest"
+        className="absolute bottom-48 right-4 z-40 flex items-center gap-2 px-3 py-2 bg-surface-deep/90 backdrop-blur-md border border-border/50 rounded-sm text-[10px] text-text-subtle hover:text-accent-soft hover:border-accent/50 transition-all shadow-lg font-mono uppercase tracking-widest"
       >
         <MessageSquare size={12} />
         Team Chat
         {unread > 0 && (
-          <span className="ml-1 px-1.5 py-0.5 bg-[#6d28d9] text-white rounded-sm text-[9px] shadow-[0_0_5px_rgba(109,40,217,0.5)]">
+          <span className="ml-1 px-1.5 py-0.5 bg-accent text-white rounded-sm text-[9px] shadow-accent">
             {unread}
           </span>
         )}
@@ -128,18 +128,18 @@ export function GameChat() {
 
   return (
     <div className="absolute bottom-48 right-4 z-40 w-72 font-mono">
-      <div className="bg-[#09090b]/95 backdrop-blur-md border border-[#27272a]/50 rounded-sm shadow-xl shadow-black/50 overflow-hidden flex flex-col">
+      <div className="bg-surface-deep/95 backdrop-blur-md border border-border/50 rounded-sm shadow-xl shadow-black/50 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-3 py-2 border-b border-[#27272a]/50 bg-[#18181b]/50">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-surface/50">
           <div className="flex items-center gap-2">
-            <MessageSquare size={12} className="text-[#a78bfa]" />
-            <span className="text-[10px] text-[#e4e4e7] uppercase tracking-[0.2em] font-bold">
+            <MessageSquare size={12} className="text-accent-soft" />
+            <span className="text-[10px] text-text-primary uppercase tracking-[0.2em] font-bold">
               Team Chat
             </span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="text-[#71717a] hover:text-[#a1a1aa] transition-colors p-1"
+            className="text-text-subtle hover:text-text-muted transition-colors p-1"
           >
             <ChevronDown size={12} />
           </button>
@@ -151,21 +151,21 @@ export function GameChat() {
           className="h-48 overflow-y-auto px-3 py-2 space-y-2"
         >
           {messages.length === 0 && (
-            <p className="text-[10px] text-[#52525b] text-center py-4 uppercase tracking-widest">
+            <p className="text-[10px] text-text-faint text-center py-4 uppercase tracking-widest">
               Silence on the channel...
             </p>
           )}
           {messages.map((msg) => (
             <div key={msg.id} className="text-[11px] leading-relaxed break-words">
               {msg.playerId === "system" ? (
-                <span className="text-[#22c55e] italic drop-shadow-[0_0_3px_rgba(34,197,94,0.3)]">{msg.text}</span>
+                <span className="text-success italic glow-success">{msg.text}</span>
               ) : (
                 <>
-                  <span className="font-bold uppercase tracking-wider drop-shadow-[0_0_2px_currentColor]" style={{ color: msg.color }}>
+                  <span className="font-bold uppercase tracking-wider glow-accent" style={{ color: msg.color }}>
                     {msg.playerName}
                   </span>
-                  <span className="text-[#52525b]"> &gt; </span>
-                  <span className="text-[#d4d4d8]">{msg.text}</span>
+                  <span className="text-text-faint"> &gt; </span>
+                  <span className="text-text-secondary">{msg.text}</span>
                 </>
               )}
             </div>
@@ -173,20 +173,20 @@ export function GameChat() {
         </div>
 
         {/* Input */}
-        <div className="flex items-center gap-2 px-3 py-2 border-t border-[#27272a]/50 bg-[#18181b]/30">
-          <span className="text-[#a78bfa] text-xs font-bold">&gt;</span>
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-border/50 bg-surface/30">
+          <span className="text-accent-soft text-xs font-bold">&gt;</span>
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Broadcast message..."
-            className="flex-1 bg-transparent text-[11px] text-[#e4e4e7] outline-none placeholder:text-[#52525b] placeholder:uppercase placeholder:tracking-wider tracking-wide"
+            className="flex-1 bg-transparent text-[11px] text-text-primary outline-none placeholder:text-text-faint placeholder:uppercase placeholder:tracking-wider tracking-wide"
             maxLength={200}
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim()}
-            className="p-1.5 text-[#52525b] hover:text-[#a78bfa] disabled:opacity-30 disabled:hover:text-[#52525b] transition-colors rounded-sm"
+            className="p-1.5 text-text-faint hover:text-accent-soft disabled:opacity-30 disabled:hover:text-text-faint transition-colors rounded-sm"
           >
             <Send size={12} />
           </button>

@@ -3,7 +3,7 @@ import React from "react";
 export function Card({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`bg-[#09090b]/80 backdrop-blur-sm border border-[#27272a] rounded-sm ${className}`}
+      className={`bg-surface-deep/80 backdrop-blur-sm border border-border rounded-sm ${className}`}
       {...props}
     >
       {children}
@@ -14,7 +14,7 @@ export function Card({ className = "", children, ...props }: React.HTMLAttribute
 export function CardHeader({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`px-5 py-4 border-b border-[#27272a]/60 ${className}`}
+      className={`px-5 py-4 border-b border-border/60 ${className}`}
       {...props}
     >
       {children}
@@ -33,7 +33,7 @@ export function CardContent({ className = "", children, ...props }: React.HTMLAt
 export function CardFooter({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`px-5 py-4 border-t border-[#27272a]/60 flex items-center ${className}`}
+      className={`px-5 py-4 border-t border-border/60 flex items-center ${className}`}
       {...props}
     >
       {children}

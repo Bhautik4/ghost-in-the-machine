@@ -26,12 +26,12 @@ export function BlackoutOverlay({ isGhost }: BlackoutOverlayProps) {
   return (
     <div
       className={`fixed inset-0 z-[60] pointer-events-none transition-opacity duration-500 ${
-        isGhost ? "bg-[#09090b]/60" : "bg-black/95 backdrop-blur-md"
+        isGhost ? "bg-surface-deep/60" : "bg-black/95 backdrop-blur-md"
       }`}
     >
       {!isGhost && (
         <div className="h-full flex items-center justify-center font-mono">
-          <p className="text-sm text-red-500/60 animate-pulse uppercase tracking-[0.3em] drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]">
+          <p className="text-sm text-red-500/60 animate-pulse uppercase tracking-[0.3em] glow-ghost-strong">
             [SYSTEM FAILURE] Power grid offline...
           </p>
         </div>

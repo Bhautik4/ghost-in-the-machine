@@ -89,7 +89,7 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
 
   return (
     <div className="absolute bottom-4 right-4 z-50 font-mono">
-      <div className="bg-[#18181b]/90 backdrop-blur-md border border-[#27272a]/50 rounded-sm p-3 shadow-xl">
+      <div className="bg-surface/90 backdrop-blur-md border border-border/50 rounded-sm p-3 shadow-xl">
         <div className="flex items-center gap-2">
           {/* Record button */}
           <button
@@ -99,17 +99,17 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
             disabled={isProcessing}
             className={`flex items-center justify-center gap-2 px-3 py-2 rounded-sm transition-all text-xs font-bold uppercase tracking-wider ${
               isRecording
-                ? "bg-[#6d28d9]/20 text-[#a78bfa] border border-[#6d28d9]/50 shadow-[0_0_10px_rgba(109,40,217,0.3)]"
+                ? "bg-accent/20 text-accent-soft border border-accent/50 shadow-accent"
                 : isProcessing
-                  ? "bg-[#09090b]/50 text-[#52525b] cursor-wait border border-[#27272a]/50"
-                  : "bg-[#09090b] text-[#a1a1aa] border border-[#27272a]/50 hover:bg-[#27272a]/50 hover:text-[#e4e4e7]"
+                  ? "bg-surface-deep/50 text-text-faint cursor-wait border border-border/50"
+                  : "bg-surface-deep text-text-muted border border-border/50 hover:bg-border/50 hover:text-text-primary"
             }`}
             title="Hold to talk"
           >
             {isRecording ? (
-              <Radio size={14} className="animate-pulse drop-shadow-[0_0_3px_currentColor]" />
+              <Radio size={14} className="animate-pulse glow-accent" />
             ) : isProcessing ? (
-              <div className="w-3.5 h-3.5 border-2 border-[#52525b] border-t-transparent rounded-full animate-spin" />
+              <div className="w-3.5 h-3.5 border-2 border-text-faint border-t-transparent rounded-full animate-spin" />
             ) : (
               <Mic size={14} />
             )}
@@ -121,8 +121,8 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
             onClick={() => setIsMuted(!isMuted)}
             className={`p-2 rounded-sm transition-all border ${
               isMuted
-                ? "bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/30 shadow-[0_0_8px_rgba(239,68,68,0.2)]"
-                : "bg-[#09090b] text-[#a1a1aa] border-[#27272a]/50 hover:bg-[#27272a]/50 hover:text-[#e4e4e7]"
+                ? "bg-ghost/10 text-ghost border-ghost/30 shadow-ghost"
+                : "bg-surface-deep text-text-muted border-border/50 hover:bg-border/50 hover:text-text-primary"
             }`}
             title={isMuted ? "Unmute" : "Mute"}
           >
@@ -130,7 +130,7 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
           </button>
         </div>
 
-        <div className="text-[9px] text-center mt-2 text-[#71717a] font-bold uppercase tracking-widest">
+        <div className="text-[9px] text-center mt-2 text-text-subtle font-bold uppercase tracking-widest">
           {isRecording
             ? "Transmitting"
             : isProcessing
@@ -139,7 +139,7 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
         </div>
 
         {isGhost && (
-          <div className="text-[8px] text-center text-[#ef4444]/60 mt-1 uppercase tracking-wider font-bold">
+          <div className="text-[8px] text-center text-ghost/60 mt-1 uppercase tracking-wider font-bold">
             Distortion Active
           </div>
         )}

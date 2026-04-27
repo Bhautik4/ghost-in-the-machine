@@ -24,7 +24,7 @@ export function PlayerCursors() {
         >
           {/* Cursor line */}
           <div
-            className="w-[2px] h-5 rounded-full shadow-[0_0_8px_currentColor]"
+            className="w-[2px] h-5 rounded-full cursor-glow"
             style={{ backgroundColor: other.presence.color, color: other.presence.color }}
           />
           {/* Name tag */}

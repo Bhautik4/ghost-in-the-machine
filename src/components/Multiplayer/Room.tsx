@@ -78,10 +78,10 @@ export function Room({ roomId = "ghost-machine-lobby", children }: RoomProps) {
       >
         <ClientSideSuspense
           fallback={
-            <div className="h-screen w-screen flex items-center justify-center bg-[#09090b] font-mono">
+            <div className="h-screen w-screen flex items-center justify-center bg-surface-deep font-mono">
               <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-[#6d28d9] border-t-transparent rounded-full animate-spin shadow-[0_0_10px_rgba(109,40,217,0.5)]" />
-                <span className="text-xs font-bold uppercase tracking-widest text-[#52525b] animate-pulse">
+                <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin shadow-accent-strong" />
+                <span className="text-xs font-bold uppercase tracking-widest text-text-faint animate-pulse">
                   Connecting to Server
                 </span>
               </div>

@@ -67,7 +67,7 @@ export function PhantomCursors() {
           }}
         >
           <div
-            className="w-[2px] h-5 rounded-full shadow-[0_0_8px_currentColor]"
+            className="w-[2px] h-5 rounded-full cursor-glow"
             style={{ backgroundColor: p.color, color: p.color }}
           />
           <div

@@ -144,20 +144,20 @@ export function VotePanel({ isGhost }: VotePanelProps) {
     const hasVoted = myId ? myId in votes : false;
 
     return (
-      <div className="fixed inset-0 z-[100] bg-[#09090b]/95 backdrop-blur-md flex items-center justify-center font-mono">
-        <div className="bg-[#18181b] border border-[#eab308]/50 shadow-[0_0_30px_rgba(234,179,8,0.2)] rounded-sm p-6 max-w-sm w-full mx-4">
-          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[#eab308]/20">
-            <Gavel size={20} className="text-[#eab308] drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]" />
-            <h3 className="text-sm font-black uppercase tracking-widest text-[#eab308]">Emergency Vote</h3>
+      <div className="fixed inset-0 z-[100] bg-surface-deep/95 backdrop-blur-md flex items-center justify-center font-mono">
+        <div className="bg-surface border border-warning/50 shadow-warning rounded-sm p-6 max-w-sm w-full mx-4">
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-warning/20">
+            <Gavel size={20} className="text-warning glow-warning-strong" />
+            <h3 className="text-sm font-black uppercase tracking-widest text-warning">Emergency Vote</h3>
           </div>
 
-          <p className="text-xs text-[#a1a1aa] mb-4 uppercase tracking-wider leading-relaxed">
-            Is <span className="text-[#ef4444] font-bold drop-shadow-[0_0_3px_rgba(239,68,68,0.8)]">{accusedName}</span>{" "}
+          <p className="text-xs text-text-muted mb-4 uppercase tracking-wider leading-relaxed">
+            Is <span className="text-ghost font-bold glow-ghost">{accusedName}</span>{" "}
             the Ghost?
           </p>
 
-          <p className="text-[10px] text-[#71717a] mb-6 uppercase tracking-wider font-bold">
-            Wrong accusation = <span className="text-[#ef4444]">-30s</span>. Votes: {Object.keys(votes).length}/
+          <p className="text-[10px] text-text-subtle mb-6 uppercase tracking-wider font-bold">
+            Wrong accusation = <span className="text-ghost">-30s</span>. Votes: {Object.keys(votes).length}/
             {allPlayers.length}
           </p>
 
@@ -165,19 +165,19 @@ export function VotePanel({ isGhost }: VotePanelProps) {
             <div className="flex gap-4">
               <button
                 onClick={() => castVote("guilty")}
-                className="flex-1 py-3 rounded-sm text-xs font-bold uppercase tracking-widest bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30 hover:bg-[#ef4444]/20 hover:border-[#ef4444]/60 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] flex items-center justify-center gap-2 transition-all"
+                className="flex-1 py-3 rounded-sm text-xs font-bold uppercase tracking-widest bg-ghost/10 text-ghost border border-ghost/30 hover:bg-ghost/20 hover:border-ghost/60 border-glow-ghost hover:shadow-ghost-strong flex items-center justify-center gap-2 transition-all"
               >
                 <UserX size={16} /> Guilty
               </button>
               <button
                 onClick={() => castVote("innocent")}
-                className="flex-1 py-3 rounded-sm text-xs font-bold uppercase tracking-widest bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/30 hover:bg-[#22c55e]/20 hover:border-[#22c55e]/60 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_15px_rgba(34,197,94,0.3)] flex items-center justify-center gap-2 transition-all"
+                className="flex-1 py-3 rounded-sm text-xs font-bold uppercase tracking-widest bg-success/10 text-success border border-success/30 hover:bg-success/20 hover:border-success/60 border-glow-success hover:shadow-success flex items-center justify-center gap-2 transition-all"
               >
                 <Check size={16} /> Innocent
               </button>
             </div>
           ) : (
-            <p className="text-xs font-bold uppercase tracking-widest text-[#52525b] text-center animate-pulse">
+            <p className="text-xs font-bold uppercase tracking-widest text-text-faint text-center animate-pulse">
               Waiting for others...
             </p>
           )}
@@ -190,14 +190,14 @@ export function VotePanel({ isGhost }: VotePanelProps) {
   return (
     <div className="font-mono relative w-full">
       {showAccuseList ? (
-        <div className="absolute top-full right-0 mt-2 bg-[#18181b] border border-[#27272a]/50 rounded-sm p-2 shadow-2xl w-48 z-50">
-          <div className="flex items-center justify-between mb-2 px-1 border-b border-[#27272a]/50 pb-2">
-            <span className="text-[10px] font-bold text-[#71717a] uppercase tracking-widest">
+        <div className="absolute top-full right-0 mt-2 bg-surface border border-border/50 rounded-sm p-2 shadow-2xl w-48 z-50">
+          <div className="flex items-center justify-between mb-2 px-1 border-b border-border/50 pb-2">
+            <span className="text-[10px] font-bold text-text-subtle uppercase tracking-widest">
               Accuse Player
             </span>
             <button
               onClick={() => setShowAccuseList(false)}
-              className="text-[#52525b] hover:text-[#ef4444] transition-colors"
+              className="text-text-faint hover:text-ghost transition-colors"
             >
               <X size={12} />
             </button>
@@ -213,7 +213,7 @@ export function VotePanel({ isGhost }: VotePanelProps) {
                   setVoteCooldown(true);
                   setTimeout(() => setVoteCooldown(false), 60000);
                 }}
-                className="w-full text-left px-3 py-2 text-xs font-bold text-[#a1a1aa] hover:bg-[#27272a]/50 hover:text-[#e4e4e7] uppercase tracking-wider transition-colors"
+                className="w-full text-left px-3 py-2 text-xs font-bold text-text-muted hover:bg-border/50 hover:text-text-primary uppercase tracking-wider transition-colors"
               >
                 {p.name}
               </button>
@@ -225,11 +225,11 @@ export function VotePanel({ isGhost }: VotePanelProps) {
           disabled={voteCooldown}
           className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest transition-all ${
             voteCooldown
-              ? "bg-[#18181b]/50 text-[#52525b] cursor-not-allowed border border-[#27272a]/50"
-              : "bg-[#eab308]/10 text-[#eab308] border border-[#eab308]/30 hover:bg-[#eab308]/20 hover:border-[#eab308]/60 shadow-[0_0_10px_rgba(234,179,8,0.1)]"
+              ? "bg-surface/50 text-text-faint cursor-not-allowed border border-border/50"
+              : "bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 hover:border-warning/60 shadow-warning"
           }`}
         >
-          <AlertTriangle size={14} className={!voteCooldown ? "drop-shadow-[0_0_3px_currentColor]" : ""} />
+          <AlertTriangle size={14} className={!voteCooldown ? "glow-accent" : ""} />
           Call Vote
         </button>
       )}

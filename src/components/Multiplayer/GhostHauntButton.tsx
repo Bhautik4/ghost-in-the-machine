@@ -34,13 +34,6 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
 
   const broadcast = useBroadcastEvent();
 
-  // ── All players: listen for demon voice broadcasts ───────────
-  useEventListener(({ event }) => {
-    if (event.type === "demon-voice") {
-      playBase64Audio(event.audioBase64);
-    }
-  });
-
   const playBase64Audio = (base64: string) => {
     try {
       const binary = atob(base64);
@@ -58,6 +51,13 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
       console.error("Failed to play demon voice:", err);
     }
   };
+
+  // ── All players: listen for demon voice broadcasts ───────────
+  useEventListener(({ event }) => {
+    if (event.type === "demon-voice") {
+      playBase64Audio(event.audioBase64);
+    }
+  });
 
   // ── Ghost only: record + process + broadcast ─────────────────
   const startRecording = useCallback(async () => {
@@ -159,10 +159,13 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
 
   return (
     <div className="absolute bottom-4 right-4 z-50 font-mono">
-      <div className="bg-[#09090b]/95 backdrop-blur-xl border border-[#ef4444]/40 rounded-sm p-4 shadow-[0_0_30px_rgba(239,68,68,0.15)] max-w-[200px]">
-        <div className="flex items-center gap-2 mb-3 px-1 border-b border-[#ef4444]/20 pb-2">
-          <Ghost size={14} className="text-[#ef4444] animate-pulse drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
-          <span className="text-[11px] font-black text-[#ef4444] uppercase tracking-[0.25em] drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">
+      <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/40 rounded-sm p-4 shadow-ghost max-w-[200px]">
+        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/20 pb-2">
+          <Ghost
+            size={14}
+            className="text-ghost animate-pulse glow-ghost-strong"
+          />
+          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em] glow-ghost">
             Haunt Voice
           </span>
         </div>
@@ -176,10 +179,10 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
           disabled={isProcessing}
           className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm text-xs font-bold uppercase tracking-widest transition-all ${
             isRecording
-              ? "bg-[#ef4444]/20 text-[#ef4444] border border-[#ef4444]/60 shadow-[0_0_15px_rgba(239,68,68,0.4)]"
+              ? "bg-ghost/20 text-ghost border border-ghost/60 shadow-ghost-strong"
               : isProcessing
-                ? "bg-[#18181b]/50 text-[#52525b] cursor-wait border border-[#27272a]/50"
-                : "bg-[#ef4444]/10 text-[#ef4444] hover:bg-[#ef4444]/20 hover:text-white border border-[#ef4444]/30 hover:border-[#ef4444]/60 shadow-[0_0_10px_rgba(239,68,68,0.1)]"
+                ? "bg-surface/50 text-text-faint cursor-wait border border-border/50"
+                : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 border-glow-ghost"
           }`}
         >
           {isRecording ? (
@@ -189,18 +192,18 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
             </>
           ) : isProcessing ? (
             <>
-              <div className="w-4 h-4 border-2 border-[#ef4444]/40 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-ghost/40 border-t-transparent rounded-full animate-spin" />
               Distorting
             </>
           ) : (
             <>
-              <Ghost size={16} className="drop-shadow-[0_0_3px_currentColor]" />
+              <Ghost size={16} className="glow-accent" />
               Hold to Speak
             </>
           )}
         </button>
 
-        <p className="text-[9px] text-[#ef4444]/50 text-center mt-3 font-medium uppercase tracking-wider leading-tight">
+        <p className="text-[9px] text-ghost/50 text-center mt-3 font-medium uppercase tracking-wider leading-tight">
           Your voice will be distorted and played for all engineers
         </p>
       </div>

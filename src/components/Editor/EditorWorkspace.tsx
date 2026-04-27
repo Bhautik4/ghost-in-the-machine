@@ -13,6 +13,7 @@ import { GameHUD } from "@/components/Editor/GameHUD";
 import { GhostControls } from "@/components/Editor/GhostControls";
 import { GameOverlay } from "@/components/Editor/GameOverlay";
 import { GhostHauntButton } from "@/components/Multiplayer/GhostHauntButton";
+import { GhostTaunts } from "@/components/Multiplayer/GhostTaunts";
 import { DemonVoiceListener } from "@/components/Multiplayer/DemonVoiceListener";
 import { RoleBanner } from "@/components/Editor/RoleBanner";
 
@@ -20,6 +21,7 @@ import { BlackoutOverlay } from "@/components/Editor/BlackoutOverlay";
 import { PhantomCursors } from "@/components/Editor/PhantomCursors";
 import { ParanoiaEffects } from "@/components/Editor/ParanoiaEffects";
 import { SoundEngine } from "@/components/Editor/SoundEngine";
+import { WhisperEngine } from "@/components/Editor/WhisperEngine";
 import { GameChat } from "@/components/Editor/GameChat";
 import { useGameStore } from "@/store/gameStore";
 import { playGameOver } from "@/lib/sounds";
@@ -36,6 +38,7 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
   const others = useOthers();
   const { paranoiaMeter, ghostEvents, startGame, phase, endGame } =
     useGameStore();
+
   const gameStartRef = useRef(Date.now());
 
   const myPlayerId = self?.presence.playerId;
@@ -81,7 +84,7 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
 
   return (
     <div
-      className={`h-screen w-screen flex flex-col overflow-hidden bg-[#09090b] font-mono ${
+      className={`h-screen w-screen flex flex-col overflow-hidden bg-surface-deep font-mono ${
         paranoiaMeter > 80 ? "paranoia-border" : ""
       } ${hasScanline ? "scanline-overlay" : ""}`}
     >
@@ -90,16 +93,18 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
       <BlackoutOverlay isGhost={isGhost} />
       <SoundEngine />
       {!isGhost && <DemonVoiceListener />}
+      {!isGhost && <WhisperEngine />}
 
       {/* Title bar */}
-      <div className="h-8 bg-[#09090b] border-b border-[#27272a]/80 flex items-center px-4 shrink-0 select-none shadow-sm z-10 relative">
+      <div className="h-8 bg-surface-deep border-b border-border/80 flex items-center px-4 shrink-0 select-none shadow-sm z-10 relative">
         <div className="flex items-center gap-2 mr-4">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ef4444] shadow-[0_0_5px_rgba(239,68,68,0.6)]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#eab308] shadow-[0_0_5px_rgba(234,179,8,0.6)]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#22c55e] shadow-[0_0_5px_rgba(34,197,94,0.6)]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-ghost shadow-ghost" />
+          <div className="w-2.5 h-2.5 rounded-full bg-warning shadow-warning" />
+          <div className="w-2.5 h-2.5 rounded-full bg-success shadow-success" />
         </div>
-        <span className="text-[10px] text-[#52525b] flex-1 text-center uppercase tracking-widest">
-          Ghost in the Machine — <span className="text-[#a78bfa]">{roomCode}</span>
+        <span className="text-[10px] text-text-faint flex-1 text-center uppercase tracking-widest">
+          Ghost in the Machine —{" "}
+          <span className="text-accent-soft">{roomCode}</span>
         </span>
         <div className="w-16" />
       </div>
@@ -111,6 +116,7 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
         <GameHUD isGhost={isGhost} />
         <GhostControls isGhost={isGhost} roomCode={roomCode} />
         <GhostHauntButton isGhost={isGhost} />
+        {isGhost && <GhostTaunts />}
         <GameChat />
       </div>
 

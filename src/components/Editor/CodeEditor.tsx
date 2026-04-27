@@ -66,48 +66,48 @@ export function CodeEditor() {
         )
       ) {
         return (
-          <span key={i} className="text-[#c084fc] drop-shadow-[0_0_3px_rgba(192,132,252,0.4)]">
+          <span key={i} className="text-accent-glow glow-keyword">
             {part}
           </span>
         );
       }
       if (/^["'`]/.test(part)) {
         return (
-          <span key={i} className="text-[#86efac] drop-shadow-[0_0_3px_rgba(134,239,172,0.4)]">
+          <span key={i} className="text-success-light glow-string">
             {part}
           </span>
         );
       }
       if (/^\/\//.test(part)) {
         return (
-          <span key={i} className="text-[#71717a] italic">
+          <span key={i} className="text-text-subtle italic">
             {part}
           </span>
         );
       }
       if (/^\d+$/.test(part)) {
         return (
-          <span key={i} className="text-[#fde047] drop-shadow-[0_0_3px_rgba(253,224,71,0.4)]">
+          <span key={i} className="text-warning-light glow-number">
             {part}
           </span>
         );
       }
       if (/^[<>/{}()[\];,=+\-*.]$/.test(part)) {
         return (
-          <span key={i} className="text-[#52525b]">
+          <span key={i} className="text-text-faint">
             {part}
           </span>
         );
       }
       if (/^[A-Z]/.test(part)) {
         return (
-          <span key={i} className="text-[#22d3ee] drop-shadow-[0_0_3px_rgba(34,211,238,0.4)]">
+          <span key={i} className="text-info-light glow-type">
             {part}
           </span>
         );
       }
       return (
-        <span key={i} className="text-[#e4e4e7]">
+        <span key={i} className="text-text-primary">
           {part}
         </span>
       );
@@ -126,7 +126,7 @@ export function CodeEditor() {
 
   return (
     <div
-      className={`flex-1 overflow-auto bg-[#09090b] relative font-mono ${hasGlitch ? "glitch-active" : ""} ${hasFlicker ? "flicker-active" : ""}`}
+      className={`flex-1 overflow-auto bg-surface-deep relative font-mono ${hasGlitch ? "glitch-active" : ""} ${hasFlicker ? "flicker-active" : ""}`}
     >
       {/* Scanline overlay when paranoid */}
       {ghostEvents.some((e) => e.type === "scanline") && (
@@ -135,12 +135,14 @@ export function CodeEditor() {
 
       <div className="flex min-h-full">
         {/* Line numbers */}
-        <div className="sticky left-0 bg-[#09090b] z-10 select-none pr-4 pl-4 pt-3 text-right border-r border-[#27272a]/50">
+        <div className="sticky left-0 bg-surface-deep z-10 select-none pr-4 pl-4 pt-3 text-right border-r border-border/50">
           {lines.map((_, i) => (
             <div
               key={i}
               className={`text-xs leading-6 ${
-                errorLines.has(i + 1) ? "text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)] font-bold" : "text-[#52525b]"
+                errorLines.has(i + 1)
+                  ? "text-red-500 glow-ghost-strong font-bold"
+                  : "text-text-faint"
               }`}
             >
               {i + 1}
@@ -173,14 +175,14 @@ export function CodeEditor() {
             onChange={(e) => handleCodeChange(e.target.value)}
             disabled={phase !== "playing"}
             spellCheck={false}
-            className="absolute inset-0 w-full h-full pt-3 pl-4 bg-transparent text-transparent caret-[#a78bfa] text-[13px] leading-6 tracking-wide resize-none outline-none font-mono selection:bg-[#6d28d9]/40"
+            className="absolute inset-0 w-full h-full pt-3 pl-4 bg-transparent text-transparent caret-accent-soft text-[13px] leading-6 tracking-wide resize-none outline-none font-mono selection:bg-accent/40"
             style={{ caretColor: "#a78bfa" }}
           />
         </div>
       </div>
 
       {/* Minimap (decorative) */}
-      <div className="absolute right-0 top-0 bottom-0 w-16 bg-[#09090b]/80 backdrop-blur-sm border-l border-[#27272a]/50 hidden lg:block z-10">
+      <div className="absolute right-0 top-0 bottom-0 w-16 bg-surface-deep/80 backdrop-blur-sm border-l border-border/50 hidden lg:block z-10">
         <div className="p-1 pt-3">
           {lines.map((line, i) => (
             <div
@@ -189,9 +191,11 @@ export function CodeEditor() {
               style={{
                 width: `${Math.min(100, (line.length / 60) * 100)}%`,
                 backgroundColor: errorLines.has(i + 1)
-                  ? "rgba(239,68,68,0.6)"
-                  : "rgba(113,113,122,0.2)",
-                boxShadow: errorLines.has(i + 1) ? "0 0 4px rgba(239,68,68,0.4)" : "none",
+                  ? "color-mix(in srgb, var(--color-ghost) 60%, transparent)"
+                  : "color-mix(in srgb, var(--color-text-subtle) 20%, transparent)",
+                boxShadow: errorLines.has(i + 1)
+                  ? "0 0 4px color-mix(in srgb, var(--color-ghost) 40%, transparent)"
+                  : "none",
               }}
             />
           ))}

@@ -257,13 +257,13 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
 
   return (
     <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 font-mono">
-      <div className="bg-[#09090b]/95 backdrop-blur-xl border border-[#ef4444]/40 rounded-sm p-4 shadow-[0_0_30px_rgba(239,68,68,0.15)]">
-        <div className="flex items-center gap-2 mb-3 px-1 border-b border-[#ef4444]/20 pb-2">
+      <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/40 rounded-sm p-4 shadow-ghost">
+        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/20 pb-2">
           <Skull
             size={14}
-            className="text-[#ef4444] animate-pulse drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]"
+            className="text-ghost animate-pulse glow-ghost-strong"
           />
-          <span className="text-[11px] font-black text-[#ef4444] uppercase tracking-[0.25em] drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">
+          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em] glow-ghost">
             Ghost Control Protocol
           </span>
         </div>
@@ -276,19 +276,19 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
               title={desc}
               className={`flex flex-col items-center justify-center gap-1.5 w-24 h-20 rounded-sm text-[10px] uppercase font-bold tracking-widest transition-all ${
                 cooldowns[key]
-                  ? "bg-[#18181b]/50 text-[#52525b] border border-[#27272a]/50 cursor-not-allowed"
-                  : "bg-[#ef4444]/10 text-[#ef4444] hover:bg-[#ef4444]/20 hover:text-white border border-[#ef4444]/30 hover:border-[#ef4444]/60 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                  ? "bg-surface/50 text-text-faint border border-border/50 cursor-not-allowed"
+                  : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 border-glow-ghost hover:shadow-ghost-strong"
               }`}
             >
               <Icon
                 size={18}
                 className={
-                  !cooldowns[key] ? "drop-shadow-[0_0_3px_currentColor]" : ""
+                  !cooldowns[key] ? "glow-accent" : ""
                 }
               />
               <span className="text-center px-1 leading-tight">{label}</span>
               {cooldowns[key] && (
-                <span className="text-[9px] text-[#ef4444]/50 mt-1 tabular-nums">
+                <span className="text-[9px] text-ghost/50 mt-1 tabular-nums">
                   {cooldownRemaining[key] || 0}s
                 </span>
               )}

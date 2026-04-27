@@ -97,22 +97,22 @@ export function Sidebar() {
                 ? toggleFolder(node.name)
                 : setActiveTab(node.name)
             }
-            className={`w-full flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-[#1e1e22] transition-colors group ${
-              isActive ? "bg-[#1e1e22] text-[#a78bfa] border-l-2 border-[#6d28d9]" : "text-[#a1a1aa] border-l-2 border-transparent"
+            className={`w-full flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-surface-raised transition-colors group ${
+              isActive ? "bg-surface-raised text-accent-soft border-l-2 border-accent" : "text-text-muted border-l-2 border-transparent"
             }`}
             style={{ paddingLeft: `${depth * 12 + 8}px` }}
           >
             {node.type === "folder" ? (
               <>
                 {isExpanded ? (
-                  <ChevronDown size={14} className="shrink-0 text-[#71717a]" />
+                  <ChevronDown size={14} className="shrink-0 text-text-subtle" />
                 ) : (
-                  <ChevronRight size={14} className="shrink-0 text-[#71717a]" />
+                  <ChevronRight size={14} className="shrink-0 text-text-subtle" />
                 )}
                 {isExpanded ? (
-                  <FolderOpen size={14} className="shrink-0 text-[#6d28d9] drop-shadow-[0_0_5px_rgba(109,40,217,0.5)]" />
+                  <FolderOpen size={14} className="shrink-0 text-accent glow-accent" />
                 ) : (
-                  <Folder size={14} className="shrink-0 text-[#6d28d9]" />
+                  <Folder size={14} className="shrink-0 text-accent" />
                 )}
               </>
             ) : (
@@ -122,10 +122,10 @@ export function Sidebar() {
                   size={14}
                   className={`shrink-0 ${
                     node.name.endsWith(".tsx")
-                      ? "text-[#3b82f6] drop-shadow-[0_0_5px_rgba(59,130,246,0.3)]"
+                      ? "text-info-blue glow-file-tsx"
                       : node.name.endsWith(".ts")
-                        ? "text-[#06b6d4] drop-shadow-[0_0_5px_rgba(6,182,212,0.3)]"
-                        : "text-[#71717a]"
+                        ? "text-info glow-file-ts"
+                        : "text-text-subtle"
                   }`}
                 />
               </>
@@ -134,13 +134,13 @@ export function Sidebar() {
             {node.hasError && !node.isFixed && (
               <Circle
                 size={8}
-                className="shrink-0 ml-auto fill-red-500 text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]"
+                className="shrink-0 ml-auto fill-red-500 text-red-500 glow-ghost-strong"
               />
             )}
             {node.isFixed && (
               <CheckCircle2
                 size={12}
-                className="shrink-0 ml-auto text-green-500 drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]"
+                className="shrink-0 ml-auto text-green-500 glow-success-strong"
               />
             )}
           </button>
@@ -162,7 +162,7 @@ export function Sidebar() {
   return (
     <div className="flex h-full font-mono">
       {/* Icon rail */}
-      <div className="w-12 bg-[#09090b] border-r border-[#27272a]/50 flex flex-col items-center py-3 gap-2">
+      <div className="w-12 bg-surface-deep border-r border-border/50 flex flex-col items-center py-3 gap-2">
         {sideIcons.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
@@ -170,8 +170,8 @@ export function Sidebar() {
             title={label}
             className={`w-10 h-10 flex items-center justify-center rounded-sm transition-all duration-200 ${
               activeSection === id
-                ? "text-[#a78bfa] bg-[#6d28d9]/10 border border-[#6d28d9]/30 shadow-[0_0_10px_rgba(109,40,217,0.2)]"
-                : "text-[#71717a] hover:text-[#a1a1aa] hover:bg-[#18181b]"
+                ? "text-accent-soft bg-accent/10 border border-accent/30 shadow-accent"
+                : "text-text-subtle hover:text-text-muted hover:bg-surface"
             }`}
           >
             <Icon size={20} />
@@ -180,8 +180,8 @@ export function Sidebar() {
       </div>
 
       {/* Panel */}
-      <div className="w-56 bg-[#18181b] border-r border-[#27272a]/50 flex flex-col overflow-hidden">
-        <div className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#a1a1aa] border-b border-[#27272a]/50 shadow-sm bg-[#09090b]/50">
+      <div className="w-56 bg-surface border-r border-border/50 flex flex-col overflow-hidden">
+        <div className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted border-b border-border/50 shadow-sm bg-surface-deep/50">
           {activeSection === "files" && "Explorer"}
           {activeSection === "players" && "Players"}
           {activeSection === "search" && "Search"}
@@ -192,7 +192,7 @@ export function Sidebar() {
         <div className="flex-1 overflow-y-auto py-2">
           {activeSection === "files" && (
             <>
-              <div className="px-4 py-2 mt-1 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#52525b]">
+              <div className="px-4 py-2 mt-1 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-text-faint">
                 ghost-machine
               </div>
               {renderTree(fileTree)}
@@ -203,18 +203,18 @@ export function Sidebar() {
             <div className="px-3 py-2 space-y-2">
               {/* Self */}
               {self && self.presence.name && (
-                <div className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs bg-[#09090b] border border-[#27272a]/50">
+                <div className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs bg-surface-deep border border-border/50">
                   <div
-                    className="w-2.5 h-2.5 rounded-sm shadow-[0_0_8px_currentColor]"
+                    className="w-2.5 h-2.5 rounded-sm cursor-glow"
                     style={{ backgroundColor: self.presence.color, color: self.presence.color }}
                   />
-                  <span className="text-[#e4e4e7] uppercase tracking-wider">
+                  <span className="text-text-primary uppercase tracking-wider">
                     {self.presence.name}
-                    <span className="text-[#52525b] ml-1.5 tracking-widest">(you)</span>
+                    <span className="text-text-faint ml-1.5 tracking-widest">(you)</span>
                   </span>
                   {phase === "playing" &&
                     ghostId === self.presence.playerId && (
-                      <Ghost size={14} className="ml-auto text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
+                      <Ghost size={14} className="ml-auto text-red-500 glow-ghost-strong" />
                     )}
                 </div>
               )}
@@ -224,18 +224,18 @@ export function Sidebar() {
                 .map((o) => (
                   <div
                     key={o.connectionId}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs border border-transparent hover:bg-[#1e1e22] transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs border border-transparent hover:bg-surface-raised transition-colors"
                   >
                     <div
-                      className="w-2.5 h-2.5 rounded-sm shadow-[0_0_8px_currentColor]"
+                      className="w-2.5 h-2.5 rounded-sm cursor-glow"
                       style={{ backgroundColor: o.presence.color, color: o.presence.color }}
                     />
-                    <span className="text-[#d4d4d8] uppercase tracking-wider">{o.presence.name}</span>
+                    <span className="text-text-secondary uppercase tracking-wider">{o.presence.name}</span>
                   </div>
                 ))}
               {others.filter((o) => o.presence.name !== "").length === 0 &&
                 !self?.presence.name && (
-                  <p className="text-[10px] text-[#52525b] px-3 uppercase tracking-widest">
+                  <p className="text-[10px] text-text-faint px-3 uppercase tracking-widest">
                     No players yet...
                   </p>
                 )}

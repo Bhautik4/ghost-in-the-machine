@@ -20,13 +20,13 @@ export function Button({
 
   const variants = {
     primary:
-      "bg-[#6d28d9]/10 text-[#a78bfa] border border-[#6d28d9]/50 hover:bg-[#6d28d9]/20 hover:border-[#8b5cf6] hover:shadow-[0_0_15px_rgba(109,40,217,0.4)]",
+      "bg-accent/10 text-accent-soft border border-accent/50 hover:bg-accent/20 hover:border-accent-light hover:shadow-accent-strong",
     secondary:
-      "bg-[#27272a]/50 text-[#d4d4d8] border border-[#3f3f46] hover:bg-[#3f3f46]/80 hover:text-[#f4f4f5] hover:border-[#52525b]",
+      "bg-border/50 text-text-secondary border border-surface-hover hover:bg-surface-hover/80 hover:text-text-primary hover:border-text-faint",
     danger:
-      "bg-red-950/30 text-red-400 border border-red-900/50 hover:bg-red-900/40 hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(220,38,38,0.3)]",
+      "bg-red-950/30 text-red-400 border border-red-900/50 hover:bg-red-900/40 hover:border-red-500/50 hover:shadow-ghost",
     ghost:
-      "bg-transparent text-[#a1a1aa] hover:text-[#e4e4e7] hover:bg-[#27272a]/30",
+      "bg-transparent text-text-muted hover:text-text-primary hover:bg-border/30",
   };
 
   const sizes = {

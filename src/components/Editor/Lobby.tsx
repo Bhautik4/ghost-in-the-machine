@@ -163,11 +163,11 @@ export function Lobby({ roomCode }: LobbyProps) {
   // Room full screen
   if (isRoomFull && !hasJoined) {
     return (
-      <div className="h-screen w-screen bg-[#09090b] flex items-center justify-center font-mono">
+      <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
         <div className="text-center">
-          <UserX size={48} className="text-red-500/80 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-          <h2 className="text-2xl font-bold text-[#e4e4e7] mb-3 uppercase tracking-widest">Room Full</h2>
-          <p className="text-sm text-[#71717a] mb-8 uppercase tracking-wider">
+          <UserX size={48} className="text-red-500/80 mx-auto mb-6 glow-ghost-strong" />
+          <h2 className="text-2xl font-bold text-text-primary mb-3 uppercase tracking-widest">Room Full</h2>
+          <p className="text-sm text-text-subtle mb-8 uppercase tracking-wider">
             This room already has {MAX_PLAYERS} players.
           </p>
           <a
@@ -183,18 +183,18 @@ export function Lobby({ roomCode }: LobbyProps) {
   // Pre-join
   if (!hasJoined) {
     return (
-      <div className="h-screen w-screen bg-[#09090b] flex items-center justify-center font-mono">
+      <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
         <div className="w-full max-w-md mx-4">
           <div className="text-center mb-10 flex flex-col items-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 border border-[#6d28d9] mb-6 shadow-[0_0_20px_rgba(109,40,217,0.3)]">
-              <Ghost size={32} className="text-[#a78bfa]" />
+            <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6 shadow-accent-strong">
+              <Ghost size={32} className="text-accent-soft" />
             </div>
-            <h1 className="text-3xl font-bold text-[#e4e4e7] tracking-[0.1em] uppercase shadow-black drop-shadow-md">
+            <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
               Ghost in the Machine
             </h1>
             <div className="mt-4 flex items-center gap-2">
-              <span className="text-[10px] text-[#71717a] uppercase tracking-widest">Room</span>
-              <span className="text-sm text-[#a78bfa] tracking-[0.3em] uppercase bg-[#6d28d9]/10 px-3 py-1 border border-[#6d28d9]/30">
+              <span className="text-[10px] text-text-subtle uppercase tracking-widest">Room</span>
+              <span className="text-sm text-accent-soft tracking-[0.3em] uppercase bg-accent/10 px-3 py-1 border border-accent/30">
                 {roomCode}
               </span>
             </div>
@@ -225,9 +225,9 @@ export function Lobby({ roomCode }: LobbyProps) {
 
           {joinedOthers.length > 0 && (
             <Card>
-              <CardHeader className="flex flex-row items-center gap-2 border-[#27272a] bg-[#18181b]/50">
-                <Users size={14} className="text-[#a78bfa]" />
-                <span className="text-xs font-medium text-[#a1a1aa] uppercase tracking-widest">
+              <CardHeader className="flex flex-row items-center gap-2 border-border bg-surface/50">
+                <Users size={14} className="text-accent-soft" />
+                <span className="text-xs font-medium text-text-muted uppercase tracking-widest">
                   In Room ({joinedOthers.length}/{MAX_PLAYERS})
                 </span>
               </CardHeader>
@@ -235,13 +235,13 @@ export function Lobby({ roomCode }: LobbyProps) {
                 {joinedOthers.map((o) => (
                   <div
                     key={o.connectionId}
-                    className="flex items-center gap-3 px-4 py-3 border border-[#27272a]/50 bg-[#18181b]"
+                    className="flex items-center gap-3 px-4 py-3 border border-border/50 bg-surface"
                   >
                     <div
-                      className="w-2.5 h-2.5 rounded-sm shadow-[0_0_8px_currentColor]"
+                      className="w-2.5 h-2.5 rounded-sm cursor-glow"
                       style={{ backgroundColor: o.presence.color, color: o.presence.color }}
                     />
-                    <span className="text-sm text-[#d4d4d8] uppercase tracking-wider">
+                    <span className="text-sm text-text-secondary uppercase tracking-wider">
                       {o.presence.name}
                     </span>
                   </div>
@@ -256,26 +256,26 @@ export function Lobby({ roomCode }: LobbyProps) {
 
   // Post-join lobby
   return (
-    <div className="h-screen w-screen bg-[#09090b] flex items-center justify-center font-mono">
+    <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
       <div className="w-full max-w-md mx-4">
         <div className="text-center mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 border border-[#6d28d9] mb-6 shadow-[0_0_20px_rgba(109,40,217,0.3)]">
-            <Ghost size={32} className="text-[#a78bfa]" />
+          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6 shadow-accent-strong">
+            <Ghost size={32} className="text-accent-soft" />
           </div>
-          <h1 className="text-3xl font-bold text-[#e4e4e7] tracking-[0.1em] uppercase shadow-black drop-shadow-md">
+          <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
             Ghost in the Machine
           </h1>
           {/* Room code + copy link */}
           <div className="mt-4 flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-[#71717a] uppercase tracking-widest">Room</span>
-              <span className="text-sm text-[#a78bfa] tracking-[0.3em] uppercase bg-[#6d28d9]/10 px-3 py-1 border border-[#6d28d9]/30">
+              <span className="text-[10px] text-text-subtle uppercase tracking-widest">Room</span>
+              <span className="text-sm text-accent-soft tracking-[0.3em] uppercase bg-accent/10 px-3 py-1 border border-accent/30">
                 {roomCode}
               </span>
             </div>
             <button
               onClick={copyInviteLink}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#18181b] border border-[#27272a] text-[10px] text-[#a1a1aa] hover:text-[#e4e4e7] hover:border-[#3f3f46] transition-colors uppercase tracking-widest"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-[10px] text-text-muted hover:text-text-primary hover:border-surface-hover transition-colors uppercase tracking-widest"
             >
               {copied ? (
                 <CheckCheck size={12} className="text-green-500" />
@@ -289,9 +289,9 @@ export function Lobby({ roomCode }: LobbyProps) {
 
         {/* Player list */}
         <Card className="mb-6">
-          <CardHeader className="flex flex-row items-center gap-2 border-[#27272a] bg-[#18181b]/50">
-            <Users size={14} className="text-[#a78bfa]" />
-            <span className="text-xs font-medium text-[#a1a1aa] uppercase tracking-widest">
+          <CardHeader className="flex flex-row items-center gap-2 border-border bg-surface/50">
+            <Users size={14} className="text-accent-soft" />
+            <span className="text-xs font-medium text-text-muted uppercase tracking-widest">
               Players ({joinedCount}/{MAX_PLAYERS})
             </span>
           </CardHeader>
@@ -299,34 +299,34 @@ export function Lobby({ roomCode }: LobbyProps) {
             {allJoinedPlayers.map((player) => (
               <div
                 key={player.connectionId}
-                className="flex items-center gap-3 px-4 py-3 border border-[#27272a]/50 bg-[#18181b]"
+                className="flex items-center gap-3 px-4 py-3 border border-border/50 bg-surface"
               >
                 <div
-                  className="w-2.5 h-2.5 rounded-sm shadow-[0_0_8px_currentColor]"
+                  className="w-2.5 h-2.5 rounded-sm cursor-glow"
                   style={{ backgroundColor: player.color, color: player.color }}
                 />
-                <span className="text-sm text-[#d4d4d8] flex-1 uppercase tracking-wider">
+                <span className="text-sm text-text-secondary flex-1 uppercase tracking-wider">
                   {player.name}
                   {player.isSelf && (
-                    <span className="text-[10px] text-[#52525b] ml-2 tracking-widest">
+                    <span className="text-[10px] text-text-faint ml-2 tracking-widest">
                       (you)
                     </span>
                   )}
                 </span>
                 {player.playerId === hostPlayerId && (
-                  <Crown size={12} className="text-[#eab308] shrink-0 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" />
+                  <Crown size={12} className="text-warning shrink-0 glow-warning" />
                 )}
                 {player.isReady ? (
-                  <Check size={14} className="text-green-500 shrink-0 drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
+                  <Check size={14} className="text-green-500 shrink-0 glow-success-strong" />
                 ) : (
-                  <span className="text-[10px] text-[#52525b] shrink-0 tracking-widest uppercase">
+                  <span className="text-[10px] text-text-faint shrink-0 tracking-widest uppercase">
                     waiting
                   </span>
                 )}
               </div>
             ))}
             {joinedCount < 2 && (
-              <p className="text-xs text-[#52525b] text-center py-4 uppercase tracking-widest border border-dashed border-[#27272a] mt-2">
+              <p className="text-xs text-text-faint text-center py-4 uppercase tracking-widest border border-dashed border-border mt-2">
                 Need at least 2 players to start
               </p>
             )}
@@ -340,7 +340,7 @@ export function Lobby({ roomCode }: LobbyProps) {
             onClick={toggleReady}
             className={`flex-1 gap-2 ${self?.presence.isReady ? "text-green-400 border-green-500/30 hover:bg-green-500/10 hover:text-green-300" : ""}`}
           >
-            <Check size={16} className={self?.presence.isReady ? "text-green-500 drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]" : ""} />
+            <Check size={16} className={self?.presence.isReady ? "text-green-500 glow-success-strong" : ""} />
             {self?.presence.isReady ? "Ready!" : "Ready Up"}
           </Button>
           {isHost && (
@@ -357,9 +357,9 @@ export function Lobby({ roomCode }: LobbyProps) {
         </div>
 
         <div
-          className={`mt-6 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest ${isHost ? "text-[#eab308]" : "text-[#52525b]"}`}
+          className={`mt-6 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest ${isHost ? "text-warning" : "text-text-faint"}`}
         >
-          <Crown size={10} className={isHost ? "drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" : ""} />
+          <Crown size={10} className={isHost ? "glow-warning" : ""} />
           <span>
             {isHost ? "You are the Host" : "Waiting for host to start..."}
           </span>

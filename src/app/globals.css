@@ -1,33 +1,92 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════
+   Ghost in the Machine — Design Tokens
+   All colors defined here, consumed via Tailwind @theme.
+   Usage: bg-surface, text-primary, border-ghost, etc.
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --color-surface-deep: #09090b;
+  --color-surface: #18181b;
+  --color-surface-raised: #1e1e22;
+  --color-surface-overlay: #27272a;
+  --color-surface-hover: #3f3f46;
+
+  /* ── Borders ──────────────────────────────────────────────── */
+  --color-border: #27272a;
+  --color-border-subtle: #1e1e22;
+
+  /* ── Text ──────────────────────────────────────────────────── */
+  --color-text-primary: #e4e4e7;
+  --color-text-secondary: #d4d4d8;
+  --color-text-muted: #a1a1aa;
+  --color-text-subtle: #71717a;
+  --color-text-faint: #52525b;
+  --color-text-ghost: #3f3f46;
+
+  /* ── Accent (Purple) ──────────────────────────────────────── */
+  --color-accent: #6d28d9;
+  --color-accent-hover: #7c3aed;
+  --color-accent-light: #8b5cf6;
+  --color-accent-soft: #a78bfa;
+  --color-accent-glow: #c084fc;
+
+  /* ── Ghost (Red) ──────────────────────────────────────────── */
+  --color-ghost: #ef4444;
+  --color-ghost-dark: #dc2626;
+  --color-ghost-light: #f87171;
+
+  /* ── Success (Green) ──────────────────────────────────────── */
+  --color-success: #22c55e;
+  --color-success-light: #86efac;
+
+  /* ── Warning (Yellow) ─────────────────────────────────────── */
+  --color-warning: #eab308;
+  --color-warning-light: #fde047;
+
+  /* ── Info (Cyan/Blue) ─────────────────────────────────────── */
+  --color-info: #06b6d4;
+  --color-info-light: #22d3ee;
+  --color-info-blue: #3b82f6;
+  --color-info-deep: #2563eb;
+
+  /* ── Syntax Highlighting ──────────────────────────────────── */
+  --color-syntax-keyword: #c084fc;
+  --color-syntax-string: #86efac;
+  --color-syntax-number: #fde047;
+  --color-syntax-type: #22d3ee;
+  --color-syntax-comment: #71717a;
+  --color-syntax-operator: #52525b;
+
+  /* ── Player Colors ────────────────────────────────────────── */
+  --color-player-purple: #6d28d9;
+  --color-player-blue: #2563eb;
+  --color-player-green: #059669;
+  --color-player-orange: #d97706;
+  --color-player-red: #dc2626;
+  --color-player-pink: #db2777;
+  --color-player-violet: #7c3aed;
+  --color-player-cyan: #0891b2;
+
+  /* ── File Type Icons ──────────────────────────────────────── */
+  --color-file-tsx: #3b82f6;
+  --color-file-ts: #06b6d4;
+  --color-file-js: #eab308;
+}
+
 @font-face {
   font-family: "JetBrains Mono";
   src: url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
-}
-
-:root {
-  --bg-primary: #18181b;
-  --bg-secondary: #1e1e22;
-  --bg-tertiary: #27272a;
-  --border: #27272a;
-  --text-primary: #d4d4d8;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --accent: #6d28d9;
-  --accent-hover: #7c3aed;
-  --ghost-red: #ef4444;
-  --ghost-glow: #dc2626;
-  --success: #22c55e;
-  --warning: #eab308;
-  --line-number: #52525b;
 }
 
 html,
 body {
   height: 100%;
   overflow: hidden;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 }
 
@@ -37,17 +96,17 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--color-surface);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
+  background: var(--color-surface-overlay);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--color-surface-hover);
 }
 
-/* Glitch animation for ghost events */
+/* Animations */
 @keyframes glitch {
   0% {
     transform: translate(0);
@@ -111,13 +170,14 @@ body {
 .glitch-active {
   animation: glitch 0.3s ease-in-out infinite;
 }
-
 .flicker-active {
   animation: flicker 0.15s ease-in-out 3;
 }
-
 .paranoia-border {
   animation: paranoia-pulse 2s ease-in-out infinite;
+}
+.cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
 }
 
 .scanline-overlay::after {
@@ -133,12 +193,122 @@ body {
   z-index: 9999;
 }
 
-.cursor-blink {
-  animation: cursor-blink 1s step-end infinite;
-}
-
-/* Selection styling */
 ::selection {
   background: rgba(109, 40, 217, 0.4);
-  color: #e4e4e7;
+  color: var(--color-text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Glow & Shadow Utilities
+   Reusable classes instead of inline drop-shadow/rgba values.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Text/icon glows */
+.glow-accent {
+  filter: drop-shadow(0 0 3px var(--color-accent-glow));
+}
+.glow-accent-strong {
+  filter: drop-shadow(0 0 8px var(--color-accent-soft));
+}
+.glow-ghost {
+  filter: drop-shadow(0 0 3px var(--color-ghost));
+}
+.glow-ghost-strong {
+  filter: drop-shadow(0 0 8px var(--color-ghost));
+}
+.glow-success {
+  filter: drop-shadow(0 0 3px var(--color-success));
+}
+.glow-success-strong {
+  filter: drop-shadow(0 0 5px var(--color-success));
+}
+.glow-warning {
+  filter: drop-shadow(0 0 3px var(--color-warning));
+}
+.glow-warning-strong {
+  filter: drop-shadow(0 0 5px var(--color-warning-light));
+}
+.glow-info {
+  filter: drop-shadow(0 0 3px var(--color-info-light));
+}
+.glow-info-strong {
+  filter: drop-shadow(0 0 5px var(--color-info-light));
+}
+.glow-keyword {
+  filter: drop-shadow(0 0 3px var(--color-syntax-keyword));
+}
+.glow-string {
+  filter: drop-shadow(0 0 3px var(--color-syntax-string));
+}
+.glow-number {
+  filter: drop-shadow(0 0 3px var(--color-syntax-number));
+}
+.glow-type {
+  filter: drop-shadow(0 0 3px var(--color-syntax-type));
+}
+.glow-file-tsx {
+  filter: drop-shadow(0 0 3px var(--color-file-tsx));
+}
+.glow-file-ts {
+  filter: drop-shadow(0 0 3px var(--color-file-ts));
+}
+.glow-file-js {
+  filter: drop-shadow(0 0 3px var(--color-file-js));
+}
+.glow-ghost-light {
+  filter: drop-shadow(0 0 3px var(--color-ghost-light));
+}
+
+/* Box shadows */
+.shadow-accent {
+  box-shadow: 0 0 15px rgba(109, 40, 217, 0.2);
+}
+.shadow-accent-strong {
+  box-shadow: 0 0 20px rgba(109, 40, 217, 0.4);
+}
+.shadow-ghost {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+}
+.shadow-ghost-strong {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+}
+.shadow-success {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+}
+.shadow-warning {
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+}
+.shadow-info {
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
+}
+
+/* Neon border glows (for panels) */
+.border-glow-accent {
+  box-shadow: 0 0 10px rgba(109, 40, 217, 0.1);
+}
+.border-glow-ghost {
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+}
+.border-glow-success {
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.1);
+}
+
+/* Cursor glow */
+.cursor-glow {
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* CRT scanline effect for overlays */
+.scanline-crt {
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
+  background-size:
+    100% 4px,
+    3px 100%;
 }

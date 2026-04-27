@@ -47,11 +47,29 @@ export function GameEditor({
   const [scanResult, setScanResult] = useState<string[] | null>(null);
   const [scanCooldown, setScanCooldown] = useState(false);
   const [snapshotCooldown, setSnapshotCooldown] = useState(false);
+  const [scanCooldownRemaining, setScanCooldownRemaining] = useState(0);
+  const [snapshotCooldownRemaining, setSnapshotCooldownRemaining] = useState(0);
+  const scanExpiryRef = useRef(0);
+  const snapshotExpiryRef = useRef(0);
   const updateMyPresence = useUpdateMyPresence();
   const others = useOthers();
   const editorContent = useStorage((root) => root.editorContent);
   const fakedTasks = useStorage((root) => root.fakedTasks);
   const { timeRemaining } = useGameStore();
+
+  // Live cooldown countdown for engineer utilities
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const scanLeft = Math.ceil((scanExpiryRef.current - now) / 1000);
+      const snapLeft = Math.ceil((snapshotExpiryRef.current - now) / 1000);
+      setScanCooldown(scanLeft > 0);
+      setScanCooldownRemaining(Math.max(0, scanLeft));
+      setSnapshotCooldown(snapLeft > 0);
+      setSnapshotCooldownRemaining(Math.max(0, snapLeft));
+    }, 250);
+    return () => clearInterval(interval);
+  }, []);
 
   const elapsed = GAME_DURATION - timeRemaining;
   const currentStage = getCurrentStage(elapsed);
@@ -72,10 +90,17 @@ export function GameEditor({
   const currentContent: string =
     typeof rawContent === "string" ? rawContent : activeTask.buggyCode;
 
+  // Track current time for fake task expiry checks (avoids Date.now() in render)
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Check if a task is truly fixed (ignoring fakes for the Ghost)
   const isTaskFixed = (taskId: string) => {
     const fakeExpiry = fakedTasks?.[taskId];
-    if (typeof fakeExpiry === "number" && fakeExpiry > Date.now() && !isGhost) {
+    if (typeof fakeExpiry === "number" && fakeExpiry > now && !isGhost) {
       return true;
     }
     const task = allTasks.find((t) => t.id === taskId)!;
@@ -139,8 +164,8 @@ export function GameEditor({
           typeof raw === "string" ? (raw as string) : task.buggyCode;
       }
       setSnapshots(snap);
+      snapshotExpiryRef.current = Date.now() + 30000;
       setSnapshotCooldown(true);
-      setTimeout(() => setSnapshotCooldown(false), 30000);
     },
     [snapshotCooldown],
   );
@@ -156,7 +181,7 @@ export function GameEditor({
   // ── Engineer Utility: Security Scan ──────────────────────────
   // Compares current code against the original buggy code.
   // Lines that differ from BOTH buggy and fixed = Ghost edits.
-  const runSecurityScan = useCallback(() => {
+  const runSecurityScan = () => {
     if (scanCooldown) return;
     const suspicious: string[] = [];
     for (const task of unlockedTasks) {
@@ -175,12 +200,12 @@ export function GameEditor({
       });
     }
     setScanResult(suspicious);
+    scanExpiryRef.current = Date.now() + 45000;
     setScanCooldown(true);
     setTimeout(() => {
-      setScanCooldown(false);
       setScanResult(null);
     }, 45000);
-  }, [scanCooldown, editorContent, unlockedTasks]);
+  };
 
   const handleCursorMove = useCallback(
     (
@@ -214,63 +239,48 @@ export function GameEditor({
         )
       )
         return (
-          <span
-            key={i}
-            className="text-[#c084fc] drop-shadow-[0_0_3px_rgba(192,132,252,0.4)]"
-          >
+          <span key={i} className="text-accent-glow glow-keyword">
             {part}
           </span>
         );
       if (/^(number|string|boolean|void)$/.test(part))
         return (
-          <span
-            key={i}
-            className="text-[#22d3ee] drop-shadow-[0_0_3px_rgba(34,211,238,0.4)]"
-          >
+          <span key={i} className="text-info-light glow-type">
             {part}
           </span>
         );
       if (/^["'`]/.test(part))
         return (
-          <span
-            key={i}
-            className="text-[#86efac] drop-shadow-[0_0_3px_rgba(134,239,172,0.4)]"
-          >
+          <span key={i} className="text-success-light glow-string">
             {part}
           </span>
         );
       if (/^\/\//.test(part))
         return (
-          <span key={i} className="text-[#71717a] italic">
+          <span key={i} className="text-text-subtle italic">
             {part}
           </span>
         );
       if (/^\d+$/.test(part))
         return (
-          <span
-            key={i}
-            className="text-[#fde047] drop-shadow-[0_0_3px_rgba(253,224,71,0.4)]"
-          >
+          <span key={i} className="text-warning-light glow-number">
             {part}
           </span>
         );
       if (/^[<>/{}()[\];,=+\-*!?:.|&]$/.test(part))
         return (
-          <span key={i} className="text-[#52525b]">
+          <span key={i} className="text-text-faint">
             {part}
           </span>
         );
       if (/^[A-Z]/.test(part))
         return (
-          <span
-            key={i}
-            className="text-[#22d3ee] drop-shadow-[0_0_3px_rgba(34,211,238,0.4)]"
-          >
+          <span key={i} className="text-info-light glow-type">
             {part}
           </span>
         );
       return (
-        <span key={i} className="text-[#e4e4e7]">
+        <span key={i} className="text-text-primary">
           {part}
         </span>
       );
@@ -293,48 +303,48 @@ export function GameEditor({
   );
 
   const stageColors: Record<number, string> = {
-    1: "text-[#86efac] drop-shadow-[0_0_3px_rgba(134,239,172,0.4)]",
-    2: "text-[#fde047] drop-shadow-[0_0_3px_rgba(253,224,71,0.4)]",
-    3: "text-[#f87171] drop-shadow-[0_0_3px_rgba(248,113,113,0.4)]",
+    1: "text-success-light glow-string",
+    2: "text-warning-light glow-number",
+    3: "text-ghost-light glow-ghost-light",
   };
   const stageBg: Record<number, string> = {
-    1: "bg-[#22c55e]/10 border-l-[3px] border-[#22c55e]",
-    2: "bg-[#eab308]/10 border-l-[3px] border-[#eab308]",
-    3: "bg-[#ef4444]/10 border-l-[3px] border-[#ef4444]",
+    1: "bg-success/10 border-l-[3px] border-success",
+    2: "bg-warning/10 border-l-[3px] border-warning",
+    3: "bg-ghost/10 border-l-[3px] border-ghost",
   };
 
   return (
     <div className="flex-1 flex overflow-hidden font-mono">
       {/* ── Task sidebar ─────────────────────────────────── */}
-      <div className="w-64 bg-[#18181b] border-r border-[#27272a]/50 flex flex-col shrink-0">
+      <div className="w-64 bg-surface border-r border-border/50 flex flex-col shrink-0">
         <button
           onClick={() => setTaskListOpen(!taskListOpen)}
-          className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#a1a1aa] hover:text-[#e4e4e7] border-b border-[#27272a]/50 transition-colors bg-[#09090b]/50"
+          className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted hover:text-text-primary border-b border-border/50 transition-colors bg-surface-deep/50"
         >
           {taskListOpen ? (
             <ChevronDown size={14} />
           ) : (
             <ChevronRight size={14} />
           )}
-          <Bug size={14} className="text-[#a78bfa]" />
+          <Bug size={14} className="text-accent-soft" />
           Tasks ({fixedCount}/{unlockedTasks.length})
         </button>
 
         {/* Task set + Stage indicator */}
-        <div className="px-4 py-2 border-b border-[#27272a]/50 bg-[#09090b]/30">
-          <span className="text-[10px] text-[#71717a] font-bold uppercase tracking-widest">
+        <div className="px-4 py-2 border-b border-border/50 bg-surface-deep/30">
+          <span className="text-[10px] text-text-subtle font-bold uppercase tracking-widest">
             {getTaskSetLabel(taskSet)}
           </span>
         </div>
         <div
-          className={`px-4 py-2 border-b border-[#27272a]/50 ${stageBg[currentStage]}`}
+          className={`px-4 py-2 border-b border-border/50 ${stageBg[currentStage]}`}
         >
           <span
             className={`text-[11px] font-bold uppercase tracking-widest ${stageColors[currentStage]}`}
           >
             Stage {currentStage}/3
           </span>
-          <span className="text-[10px] text-[#71717a] ml-3 uppercase tracking-wider">
+          <span className="text-[10px] text-text-subtle ml-3 uppercase tracking-wider">
             {currentStage === 1 && "Syntax"}
             {currentStage === 2 && "Logic"}
             {currentStage === 3 && "Hard DSA"}
@@ -354,35 +364,35 @@ export function GameEditor({
                   disabled={locked}
                   className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs transition-all ${
                     locked
-                      ? "text-[#52525b] cursor-not-allowed opacity-50"
+                      ? "text-text-faint cursor-not-allowed opacity-50"
                       : isActive
-                        ? "bg-[#6d28d9]/10 text-[#a78bfa] border-l-[3px] border-[#6d28d9]"
-                        : "text-[#a1a1aa] hover:bg-[#1e1e22] border-l-[3px] border-transparent"
+                        ? "bg-accent/10 text-accent-soft border-l-[3px] border-accent"
+                        : "text-text-muted hover:bg-surface-raised border-l-[3px] border-transparent"
                   }`}
                 >
                   {locked ? (
-                    <Lock size={14} className="shrink-0 text-[#52525b]" />
+                    <Lock size={14} className="shrink-0 text-text-faint" />
                   ) : fixed ? (
                     <CheckCircle2
                       size={14}
-                      className="shrink-0 text-[#22c55e] drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]"
+                      className="shrink-0 text-success glow-success-strong"
                     />
                   ) : (
                     <Circle
                       size={14}
-                      className="shrink-0 text-[#ef4444] drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]"
+                      className="shrink-0 text-ghost glow-ghost"
                     />
                   )}
                   <FileText
                     size={14}
                     className={`shrink-0 ${
                       locked
-                        ? "text-[#52525b]"
+                        ? "text-text-faint"
                         : task.fileName.endsWith(".tsx")
-                          ? "text-[#3b82f6] drop-shadow-[0_0_5px_rgba(59,130,246,0.4)]"
+                          ? "text-info-blue glow-file-tsx"
                           : task.fileName.endsWith(".ts")
-                            ? "text-[#06b6d4] drop-shadow-[0_0_5px_rgba(6,182,212,0.4)]"
-                            : "text-[#eab308] drop-shadow-[0_0_5px_rgba(234,179,8,0.4)]"
+                            ? "text-info glow-file-ts"
+                            : "text-warning glow-warning"
                     }`}
                   />
                   <span className="truncate tracking-wider">
@@ -402,15 +412,15 @@ export function GameEditor({
         )}
 
         {/* Task description */}
-        <div className="border-t border-[#27272a]/50 px-4 py-3 bg-[#09090b]/30">
-          <p className="text-[10px] text-[#71717a] font-bold uppercase tracking-[0.2em] mb-2">
+        <div className="border-t border-border/50 px-4 py-3 bg-surface-deep/30">
+          <p className="text-[10px] text-text-subtle font-bold uppercase tracking-[0.2em] mb-2">
             Mission Objective
           </p>
-          <p className="text-[11px] leading-relaxed text-[#d4d4d8] tracking-wide">
+          <p className="text-[11px] leading-relaxed text-text-secondary tracking-wide">
             {activeTask.description}
           </p>
           {isTaskFixed(activeTaskId) && (
-            <p className="text-[11px] text-[#22c55e] mt-2 font-bold uppercase tracking-widest drop-shadow-[0_0_5px_rgba(34,197,94,0.4)]">
+            <p className="text-[11px] text-success mt-2 font-bold uppercase tracking-widest glow-success">
               ✓ Fixed
             </p>
           )}
@@ -418,25 +428,27 @@ export function GameEditor({
 
         {/* Engineer utilities */}
         {!isGhost && (
-          <div className="border-t border-[#27272a]/50 px-3 py-3 space-y-2 bg-[#09090b]/50">
+          <div className="border-t border-border/50 px-3 py-3 space-y-2 bg-surface-deep/50">
             <button
               onClick={() => takeSnapshot()}
               disabled={snapshotCooldown}
               className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
                 snapshotCooldown
-                  ? "bg-[#27272a]/30 text-[#52525b] cursor-not-allowed border border-[#27272a]/30"
-                  : "bg-[#0891b2]/10 text-[#22d3ee] hover:bg-[#0891b2]/20 border border-[#0891b2]/30 shadow-[0_0_10px_rgba(8,145,178,0.1)]"
+                  ? "bg-border/30 text-text-faint cursor-not-allowed border border-border/30"
+                  : "bg-player-cyan/10 text-info-light hover:bg-player-cyan/20 border border-player-cyan/30 shadow-info"
               }`}
             >
               <Camera size={14} />
-              {Object.keys(snapshots).length > 0
-                ? "Update Snapshot"
-                : "Take Snapshot"}
+              {snapshotCooldown
+                ? `Cooldown (${snapshotCooldownRemaining}s)`
+                : Object.keys(snapshots).length > 0
+                  ? "Update Snapshot"
+                  : "Take Snapshot"}
             </button>
             {Object.keys(snapshots).length > 0 && (
               <button
                 onClick={() => revertToSnapshot()}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest bg-[#eab308]/10 text-[#fde047] hover:bg-[#eab308]/20 border border-[#eab308]/30 transition-all shadow-[0_0_10px_rgba(234,179,8,0.1)]"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest bg-warning/10 text-warning-light hover:bg-warning/20 border border-warning/30 transition-all shadow-warning"
               >
                 <Camera size={14} />
                 Revert System
@@ -447,38 +459,38 @@ export function GameEditor({
               disabled={scanCooldown}
               className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
                 scanCooldown
-                  ? "bg-[#27272a]/30 text-[#52525b] cursor-not-allowed border border-[#27272a]/30"
-                  : "bg-[#6d28d9]/10 text-[#c084fc] hover:bg-[#6d28d9]/20 border border-[#6d28d9]/30 shadow-[0_0_10px_rgba(109,40,217,0.1)]"
+                  ? "bg-border/30 text-text-faint cursor-not-allowed border border-border/30"
+                  : "bg-accent/10 text-accent-glow hover:bg-accent/20 border border-accent/30 border-glow-accent"
               }`}
             >
               <ScanSearch size={14} />
-              Security Scan {scanCooldown && "(45s)"}
+              Security Scan {scanCooldown && `(${scanCooldownRemaining}s)`}
             </button>
           </div>
         )}
       </div>
 
       {/* ── Editor area ──────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-[#09090b]">
+      <div className="flex-1 flex flex-col overflow-hidden bg-surface-deep">
         {/* Tab bar */}
-        <div className="h-10 bg-[#18181b] border-b border-[#27272a]/50 flex items-end">
-          <div className="relative h-full px-5 flex items-center gap-2.5 text-[11px] bg-[#09090b] text-[#e4e4e7] border-r border-[#27272a]/50 font-medium tracking-wider">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#a78bfa] shadow-[0_0_5px_rgba(167,139,250,0.5)]" />
+        <div className="h-10 bg-surface border-b border-border/50 flex items-end">
+          <div className="relative h-full px-5 flex items-center gap-2.5 text-[11px] bg-surface-deep text-text-primary border-r border-border/50 font-medium tracking-wider">
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-accent-soft shadow-accent" />
             <FileText
               size={14}
               className={
                 activeTask.fileName.endsWith(".tsx")
-                  ? "text-[#3b82f6] drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]"
+                  ? "text-info-blue glow-file-tsx"
                   : activeTask.fileName.endsWith(".ts")
-                    ? "text-[#06b6d4] drop-shadow-[0_0_3px_rgba(6,182,212,0.5)]"
-                    : "text-[#eab308] drop-shadow-[0_0_3px_rgba(234,179,8,0.5)]"
+                    ? "text-info glow-file-ts"
+                    : "text-warning glow-file-js"
               }
             />
             {activeTask.fileName}
             {isTaskFixed(activeTaskId) && (
               <CheckCircle2
                 size={12}
-                className="text-[#22c55e] drop-shadow-[0_0_3px_rgba(34,197,94,0.5)] ml-1"
+                className="text-success glow-success ml-1"
               />
             )}
             <span
@@ -494,14 +506,14 @@ export function GameEditor({
         <div className="flex-1 overflow-auto relative">
           <div className="flex min-h-full">
             {/* Line numbers */}
-            <div className="sticky left-0 bg-[#09090b] z-10 select-none pr-4 pl-4 pt-4 text-right border-r border-[#27272a]/50">
+            <div className="sticky left-0 bg-surface-deep z-10 select-none pr-4 pl-4 pt-4 text-right border-r border-border/50">
               {lines.map((_, i) => (
                 <div
                   key={i}
                   className={`text-xs leading-6 ${
                     suspiciousLineNums.has(i + 1)
-                      ? "text-[#ef4444] font-bold drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]"
-                      : "text-[#52525b]"
+                      ? "text-ghost font-bold glow-ghost-strong"
+                      : "text-text-faint"
                   }`}
                 >
                   {i + 1}
@@ -531,7 +543,7 @@ export function GameEditor({
                 onKeyUp={handleCursorMove}
                 readOnly={!isTaskUnlocked}
                 spellCheck={false}
-                className={`absolute inset-0 w-full h-full pt-4 pl-5 bg-transparent text-transparent caret-[#a78bfa] text-[13px] tracking-wide leading-6 resize-none outline-none font-mono selection:bg-[#6d28d9]/40 ${
+                className={`absolute inset-0 w-full h-full pt-4 pl-5 bg-transparent text-transparent caret-accent-soft text-[13px] tracking-wide leading-6 resize-none outline-none font-mono selection:bg-accent/40 ${
                   !isTaskUnlocked ? "cursor-not-allowed" : ""
                 }`}
                 style={{ caretColor: "#a78bfa" }}
@@ -539,9 +551,9 @@ export function GameEditor({
 
               {/* Locked overlay */}
               {!isTaskUnlocked && (
-                <div className="absolute inset-0 bg-[#09090b]/80 backdrop-blur-sm flex items-center justify-center z-20">
-                  <div className="flex items-center gap-3 px-6 py-3 rounded-md bg-[#18181b]/90 border border-[#27272a] text-[#a1a1aa] text-xs font-bold uppercase tracking-widest shadow-2xl">
-                    <Lock size={16} className="text-[#a78bfa]" />
+                <div className="absolute inset-0 bg-surface-deep/80 backdrop-blur-sm flex items-center justify-center z-20">
+                  <div className="flex items-center gap-3 px-6 py-3 rounded-md bg-surface/90 border border-border text-text-muted text-xs font-bold uppercase tracking-widest shadow-2xl">
+                    <Lock size={16} className="text-accent-soft" />
                     <span>Unlocks at Stage {activeTask.stage}</span>
                   </div>
                 </div>
@@ -558,7 +570,7 @@ export function GameEditor({
                   }}
                 >
                   <div
-                    className="w-[2px] h-5 rounded-full shadow-[0_0_8px_currentColor]"
+                    className="w-[2px] h-5 rounded-full cursor-glow"
                     style={{
                       backgroundColor: o.presence.color,
                       color: o.presence.color,
@@ -576,7 +588,7 @@ export function GameEditor({
           </div>
 
           {/* Minimap */}
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-[#09090b]/80 backdrop-blur-sm border-l border-[#27272a]/50 hidden lg:block z-10">
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-surface-deep/80 backdrop-blur-sm border-l border-border/50 hidden lg:block z-10">
             <div className="p-1 pt-4">
               {lines.map((line, i) => (
                 <div
@@ -585,10 +597,10 @@ export function GameEditor({
                   style={{
                     width: `${Math.min(100, (line.length / 50) * 100)}%`,
                     backgroundColor: suspiciousLineNums.has(i + 1)
-                      ? "rgba(239,68,68,0.6)"
-                      : "rgba(113,113,122,0.2)",
+                      ? "color-mix(in srgb, var(--color-ghost) 60%, transparent)"
+                      : "color-mix(in srgb, var(--color-text-subtle) 20%, transparent)",
                     boxShadow: suspiciousLineNums.has(i + 1)
-                      ? "0 0 4px rgba(239,68,68,0.4)"
+                      ? "0 0 4px color-mix(in srgb, var(--color-ghost) 40%, transparent)"
                       : "none",
                   }}
                 />

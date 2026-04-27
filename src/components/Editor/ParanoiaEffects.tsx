@@ -59,7 +59,7 @@ export function ParanoiaEffects() {
           className="fixed inset-0 pointer-events-none z-20 mix-blend-overlay transition-opacity duration-1000"
           style={{
             opacity: Math.min(0.2, (paranoiaMeter - 30) / 200),
-            background: `linear-gradient(${Date.now() % 360}deg, rgba(239,68,68,0.2), transparent, rgba(109,40,217,0.2))`,
+            background: `linear-gradient(${Date.now() % 360}deg, color-mix(in srgb, var(--color-ghost) 20%, transparent), transparent, color-mix(in srgb, var(--color-accent) 20%, transparent))`,
           }}
         />
       )}
@@ -68,10 +68,11 @@ export function ParanoiaEffects() {
       {glitchActive && (
         <div className="fixed inset-0 pointer-events-none z-30">
           <div
-            className="absolute w-full h-1 shadow-[0_0_10px_rgba(239,68,68,0.8)]"
+            className="absolute w-full h-1 shadow-ghost-strong"
             style={{
               top: `${Math.random() * 100}%`,
-              background: "rgba(239,68,68,0.6)",
+              background:
+                "color-mix(in srgb, var(--color-ghost) 60%, transparent)",
               transform: `translateX(${Math.random() * 10 - 5}px)`,
             }}
           />
@@ -86,7 +87,7 @@ export function ParanoiaEffects() {
             style={{
               top: `${30 + Math.random() * 40}%`,
               height: `${2 + Math.random() * 5}%`,
-              background: "#09090b",
+              background: "var(--color-surface-deep)",
               transform: `translateX(${Math.random() * 30 - 15}px)`,
             }}
           />
@@ -98,7 +99,7 @@ export function ParanoiaEffects() {
         <style>{`
           textarea {
             transition: caret-color 0.5s;
-            caret-color: ${Math.random() > 0.5 ? "#ef4444" : "#a78bfa"} !important;
+            caret-color: ${Math.random() > 0.5 ? "var(--color-ghost)" : "var(--color-accent-soft)"} !important;
           }
         `}</style>
       )}

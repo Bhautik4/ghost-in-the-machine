@@ -32,17 +32,17 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#09090b] flex items-center justify-center font-mono">
+    <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
       <div className="w-full max-w-md mx-4">
         {/* Logo */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 border border-[#6d28d9] mb-6 shadow-[0_0_20px_rgba(109,40,217,0.3)]">
-            <Ghost size={32} className="text-[#a78bfa]" />
+          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6 shadow-accent-strong">
+            <Ghost size={32} className="text-accent-soft" />
           </div>
-          <h1 className="text-3xl font-bold text-[#e4e4e7] tracking-[0.1em] uppercase shadow-black drop-shadow-md">
+          <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
             Ghost in the Machine
           </h1>
-          <p className="text-sm text-[#71717a] mt-3 uppercase tracking-wider">
+          <p className="text-sm text-text-subtle mt-3 uppercase tracking-wider">
             A real-time social deduction game for coders
           </p>
         </div>
@@ -57,11 +57,11 @@ export default function Home() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 mb-6 opacity-60">
-          <div className="flex-1 h-px bg-[#27272a]" />
-          <span className="text-[10px] text-[#52525b] uppercase tracking-[0.2em]">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-[10px] text-text-faint uppercase tracking-[0.2em]">
             or join a room
           </span>
-          <div className="flex-1 h-px bg-[#27272a]" />
+          <div className="flex-1 h-px bg-border" />
         </div>
 
         {/* Join Game */}
@@ -95,7 +95,7 @@ export default function Home() {
           </p>
         )}
 
-        <p className="text-[10px] text-[#3f3f46] text-center mt-8 uppercase tracking-widest">
+        <p className="text-[10px] text-surface-hover text-center mt-8 uppercase tracking-widest">
           Up to 4 players per room · 4-minute rounds
         </p>
       </div>
