@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* ── Global: pointer cursor on all interactive elements ──── */
+button,
+[role="button"],
+a,
+input[type="submit"],
+input[type="button"],
+select,
+summary {
+  cursor: pointer;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    Ghost in the Machine — Design Tokens
    All colors defined here, consumed via Tailwind @theme.

@@ -88,7 +88,7 @@ export function GhostTaunts() {
   };
 
   return (
-    <div className="absolute bottom-32 right-4 z-50 font-mono w-52">
+    <div className="font-mono w-52">
       <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/30 rounded-sm shadow-ghost">
         <div className="flex items-center gap-2 px-3 py-2 border-b border-ghost/20">
           <MessageSquare size={12} className="text-ghost" />

@@ -49,8 +49,15 @@ export async function POST(request: NextRequest) {
           use_speaker_boost: false,
         };
 
+    // ElevenLabs requires a recognisable filename + extension.
+    // The browser records as webm/opus — convert the Blob so the
+    // multipart upload carries the right content-disposition.
+    const audioBlob = new Blob([await audioFile.arrayBuffer()], {
+      type: "audio/webm",
+    });
+
     const stsForm = new FormData();
-    stsForm.append("audio", audioFile);
+    stsForm.append("audio", audioBlob, "recording.webm");
     stsForm.append("model_id", "eleven_english_sts_v2");
     stsForm.append("voice_settings", JSON.stringify(voiceSettings));
 

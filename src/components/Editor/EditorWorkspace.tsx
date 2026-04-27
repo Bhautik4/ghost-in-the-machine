@@ -115,9 +115,12 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
         <PhantomCursors />
         <GameHUD isGhost={isGhost} />
         <GhostControls isGhost={isGhost} roomCode={roomCode} />
-        <GhostHauntButton isGhost={isGhost} />
-        {isGhost && <GhostTaunts />}
-        <GameChat />
+        {/* Right-side panel stack — flex column to prevent overlap */}
+        <div className="absolute bottom-4 right-4 z-50 flex flex-col gap-3 items-end max-h-[calc(100%-2rem)] overflow-y-auto">
+          {isGhost && <GhostTaunts />}
+          <GhostHauntButton isGhost={isGhost} />
+          <GameChat />
+        </div>
       </div>
 
       <StatusBar />

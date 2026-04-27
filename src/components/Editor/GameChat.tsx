@@ -112,7 +112,7 @@ export function GameChat() {
           setIsOpen(true);
           setUnread(0);
         }}
-        className="absolute bottom-48 right-4 z-40 flex items-center gap-2 px-3 py-2 bg-surface-deep/90 backdrop-blur-md border border-border/50 rounded-sm text-[10px] text-text-subtle hover:text-accent-soft hover:border-accent/50 transition-all shadow-lg font-mono uppercase tracking-widest"
+        className="flex items-center gap-2 px-3 py-2 bg-surface-deep/90 backdrop-blur-md border border-border/50 rounded-sm text-[10px] text-text-subtle hover:text-accent-soft hover:border-accent/50 transition-all shadow-lg font-mono uppercase tracking-widest"
       >
         <MessageSquare size={12} />
         Team Chat
@@ -127,7 +127,7 @@ export function GameChat() {
   }
 
   return (
-    <div className="absolute bottom-48 right-4 z-40 w-72 font-mono">
+    <div className="w-72 font-mono">
       <div className="bg-surface-deep/95 backdrop-blur-md border border-border/50 rounded-sm shadow-xl shadow-black/50 overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-surface/50">
@@ -156,12 +156,20 @@ export function GameChat() {
             </p>
           )}
           {messages.map((msg) => (
-            <div key={msg.id} className="text-[11px] leading-relaxed break-words">
+            <div
+              key={msg.id}
+              className="text-[11px] leading-relaxed break-words"
+            >
               {msg.playerId === "system" ? (
-                <span className="text-success italic glow-success">{msg.text}</span>
+                <span className="text-success italic glow-success">
+                  {msg.text}
+                </span>
               ) : (
                 <>
-                  <span className="font-bold uppercase tracking-wider glow-accent" style={{ color: msg.color }}>
+                  <span
+                    className="font-bold uppercase tracking-wider glow-accent"
+                    style={{ color: msg.color }}
+                  >
                     {msg.playerName}
                   </span>
                   <span className="text-text-faint"> &gt; </span>

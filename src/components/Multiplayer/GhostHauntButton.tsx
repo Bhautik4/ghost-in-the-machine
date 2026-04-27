@@ -67,7 +67,9 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
       streamRef.current = stream;
 
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: "audio/webm;codecs=opus",
+        mimeType: MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+          ? "audio/webm;codecs=opus"
+          : "audio/webm",
       });
       chunksRef.current = [];
 
@@ -91,7 +93,7 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
         setIsProcessing(true);
         try {
           const formData = new FormData();
-          formData.append("audio", audioBlob);
+          formData.append("audio", audioBlob, "recording.webm");
           // Send elapsed time for Audio Climax feature
           const elapsed = 240 - useGameStore.getState().timeRemaining;
           formData.append("elapsed", elapsed.toString());
@@ -158,7 +160,7 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
   if (!isGhost) return null;
 
   return (
-    <div className="absolute bottom-4 right-4 z-50 font-mono">
+    <div className="font-mono">
       <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/40 rounded-sm p-4 shadow-ghost max-w-[200px]">
         <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/20 pb-2">
           <Ghost
