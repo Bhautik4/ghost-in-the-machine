@@ -33,7 +33,7 @@ export function StatusBar() {
 
         {/* Errors */}
         {errorCount > 0 && (
-          <div className="flex items-center gap-1.5 text-red-400 glow-ghost-light">
+          <div className="flex items-center gap-1.5 text-red-400">
             <AlertTriangle size={12} />
             <span>{errorCount} ERRORS</span>
           </div>
@@ -55,9 +55,9 @@ export function StatusBar() {
             <span
               className={`transition-colors ${
                 paranoiaMeter > 70
-                  ? "text-red-500 glow-ghost-strong font-bold animate-pulse"
+                  ? "text-red-500 font-bold animate-pulse"
                   : paranoiaMeter > 40
-                    ? "text-yellow-400 glow-warning"
+                    ? "text-yellow-400"
                     : "text-text-secondary"
               }`}
             >
@@ -78,7 +78,10 @@ export function StatusBar() {
         </span>
         <span className="text-text-subtle">UTF-8</span>
 
-        <Bell size={12} className="text-text-subtle hover:text-accent-soft transition-colors cursor-pointer" />
+        <Bell
+          size={12}
+          className="text-text-subtle hover:text-accent-soft transition-colors cursor-pointer"
+        />
       </div>
     </div>
   );

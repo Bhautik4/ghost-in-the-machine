@@ -63,15 +63,15 @@ export function PhantomCursors() {
           className="absolute pointer-events-none z-30 transition-all duration-700 font-mono"
           style={{
             top: `${(p.line - 1) * 24 + 16}px`,
-            left: `${p.col * 7.8 + 20}px`,
+            left: `${p.col * 8.4 + 20}px`,
           }}
         >
           <div
-            className="w-[2px] h-5 rounded-full cursor-glow"
-            style={{ backgroundColor: p.color, color: p.color }}
+            className="w-[2px] h-5 rounded-full"
+            style={{ backgroundColor: p.color }}
           />
           <div
-            className="absolute -top-6 left-0 px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wider whitespace-nowrap shadow-lg"
+            className="absolute -top-5 left-0 px-1.5 py-0.5 rounded-sm text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
             style={{ backgroundColor: p.color, color: "#fff" }}
           >
             {p.name}

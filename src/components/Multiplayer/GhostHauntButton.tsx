@@ -14,14 +14,15 @@ interface GhostHauntButtonProps {
 }
 
 /**
- * Ghost-only "Hold to Speak" button.
+ * Ghost-only "Click to Speak" toggle button.
  *
- * When held:
- *  1. Records the Ghost's mic via MediaRecorder
+ * When clicked:
+ *  1. Starts recording the Ghost's mic via MediaRecorder (click again to stop)
  *  2. Sends the audio blob to /api/voice (ElevenLabs STS)
  *  3. Gets back a "demon voice" audio buffer
  *  4. Broadcasts the base64-encoded audio to all players via Liveblocks
  *  5. Every client (including engineers) plays the demon voice
+ *  6. Auto-stops after 15s if the ghost forgets to click stop
  */
 export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
   const [isRecording, setIsRecording] = useState(false);
@@ -30,6 +31,9 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const recordStartRef = useRef(0);
+  const maxRecordingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const self = useSelf();
 
   const broadcast = useBroadcastEvent();
@@ -60,6 +64,17 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
   });
 
   // ── Ghost only: record + process + broadcast ─────────────────
+  const stopRecording = useCallback(() => {
+    if (maxRecordingTimerRef.current) {
+      clearTimeout(maxRecordingTimerRef.current);
+      maxRecordingTimerRef.current = null;
+    }
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  }, []);
+
   const startRecording = useCallback(async () => {
     if (!isGhost) return;
     try {
@@ -136,21 +151,29 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
       mediaRecorderRef.current = mediaRecorder;
       recordStartRef.current = Date.now();
       setIsRecording(true);
+
+      // Auto-stop after 15s so mic doesn't stay hot
+      maxRecordingTimerRef.current = setTimeout(() => {
+        stopRecording();
+      }, 15000);
     } catch (err) {
       console.error("Mic access failed:", err);
     }
-  }, [isGhost, broadcast, self?.presence.name]);
+  }, [isGhost, broadcast, self?.presence.name, stopRecording]);
 
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current?.state === "recording") {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
+  const toggleRecording = useCallback(() => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
     }
-  }, []);
+  }, [isRecording, startRecording, stopRecording]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (maxRecordingTimerRef.current)
+        clearTimeout(maxRecordingTimerRef.current);
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
   }, []);
@@ -161,36 +184,29 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
 
   return (
     <div className="font-mono">
-      <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/40 rounded-sm p-4 shadow-ghost max-w-[200px]">
-        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/20 pb-2">
-          <Ghost
-            size={14}
-            className="text-ghost animate-pulse glow-ghost-strong"
-          />
-          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em] glow-ghost">
+      <div className="bg-surface-raised/95 backdrop-blur-xl border border-ghost/50 rounded-sm p-4 shadow-ghost max-w-[200px]">
+        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/30 pb-2">
+          <Ghost size={14} className="text-ghost animate-pulse" />
+          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em]">
             Haunt Voice
           </span>
         </div>
 
         <button
-          onMouseDown={startRecording}
-          onMouseUp={stopRecording}
-          onMouseLeave={stopRecording}
-          onTouchStart={startRecording}
-          onTouchEnd={stopRecording}
+          onClick={toggleRecording}
           disabled={isProcessing}
           className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm text-xs font-bold uppercase tracking-widest transition-all ${
             isRecording
               ? "bg-ghost/20 text-ghost border border-ghost/60 shadow-ghost-strong"
               : isProcessing
                 ? "bg-surface/50 text-text-faint cursor-wait border border-border/50"
-                : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 border-glow-ghost"
+                : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60"
           }`}
         >
           {isRecording ? (
             <>
               <Radio size={16} className="animate-pulse" />
-              Recording
+              Click to Stop
             </>
           ) : isProcessing ? (
             <>
@@ -199,8 +215,8 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
             </>
           ) : (
             <>
-              <Ghost size={16} className="glow-accent" />
-              Hold to Speak
+              <Ghost size={16} />
+              Click to Speak
             </>
           )}
         </button>

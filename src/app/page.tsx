@@ -36,7 +36,7 @@ export default function Home() {
       <div className="w-full max-w-md mx-4">
         {/* Logo */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6 shadow-accent-strong">
+          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6">
             <Ghost size={32} className="text-accent-soft" />
           </div>
           <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
@@ -49,7 +49,13 @@ export default function Home() {
 
         {/* Create Game */}
         <div className="mb-6">
-          <Button variant="primary" fullWidth size="lg" onClick={handleCreate} className="gap-2.5">
+          <Button
+            variant="primary"
+            fullWidth
+            size="lg"
+            onClick={handleCreate}
+            className="gap-2.5"
+          >
             <Plus size={18} />
             Create Game
           </Button>

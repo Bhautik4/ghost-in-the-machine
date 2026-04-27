@@ -89,8 +89,8 @@ export function GhostTaunts() {
 
   return (
     <div className="font-mono w-52">
-      <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/30 rounded-sm shadow-ghost">
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-ghost/20">
+      <div className="bg-surface-raised/95 backdrop-blur-xl border border-ghost/50 rounded-sm shadow-ghost">
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-ghost/30">
           <MessageSquare size={12} className="text-ghost" />
           <span className="text-[10px] font-bold text-ghost uppercase tracking-[0.2em]">
             Demon Taunts

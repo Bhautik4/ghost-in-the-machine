@@ -98,19 +98,27 @@ export function Sidebar() {
                 : setActiveTab(node.name)
             }
             className={`w-full flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-surface-raised transition-colors group ${
-              isActive ? "bg-surface-raised text-accent-soft border-l-2 border-accent" : "text-text-muted border-l-2 border-transparent"
+              isActive
+                ? "bg-surface-raised text-accent-soft border-l-2 border-accent"
+                : "text-text-muted border-l-2 border-transparent"
             }`}
             style={{ paddingLeft: `${depth * 12 + 8}px` }}
           >
             {node.type === "folder" ? (
               <>
                 {isExpanded ? (
-                  <ChevronDown size={14} className="shrink-0 text-text-subtle" />
+                  <ChevronDown
+                    size={14}
+                    className="shrink-0 text-text-subtle"
+                  />
                 ) : (
-                  <ChevronRight size={14} className="shrink-0 text-text-subtle" />
+                  <ChevronRight
+                    size={14}
+                    className="shrink-0 text-text-subtle"
+                  />
                 )}
                 {isExpanded ? (
-                  <FolderOpen size={14} className="shrink-0 text-accent glow-accent" />
+                  <FolderOpen size={14} className="shrink-0 text-accent" />
                 ) : (
                   <Folder size={14} className="shrink-0 text-accent" />
                 )}
@@ -122,9 +130,9 @@ export function Sidebar() {
                   size={14}
                   className={`shrink-0 ${
                     node.name.endsWith(".tsx")
-                      ? "text-info-blue glow-file-tsx"
+                      ? "text-info-blue"
                       : node.name.endsWith(".ts")
-                        ? "text-info glow-file-ts"
+                        ? "text-info"
                         : "text-text-subtle"
                   }`}
                 />
@@ -134,13 +142,13 @@ export function Sidebar() {
             {node.hasError && !node.isFixed && (
               <Circle
                 size={8}
-                className="shrink-0 ml-auto fill-red-500 text-red-500 glow-ghost-strong"
+                className="shrink-0 ml-auto fill-red-500 text-red-500"
               />
             )}
             {node.isFixed && (
               <CheckCircle2
                 size={12}
-                className="shrink-0 ml-auto text-green-500 glow-success-strong"
+                className="shrink-0 ml-auto text-green-500"
               />
             )}
           </button>
@@ -206,15 +214,20 @@ export function Sidebar() {
                 <div className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs bg-surface-deep border border-border/50">
                   <div
                     className="w-2.5 h-2.5 rounded-sm cursor-glow"
-                    style={{ backgroundColor: self.presence.color, color: self.presence.color }}
+                    style={{
+                      backgroundColor: self.presence.color,
+                      color: self.presence.color,
+                    }}
                   />
                   <span className="text-text-primary uppercase tracking-wider">
                     {self.presence.name}
-                    <span className="text-text-faint ml-1.5 tracking-widest">(you)</span>
+                    <span className="text-text-faint ml-1.5 tracking-widest">
+                      (you)
+                    </span>
                   </span>
                   {phase === "playing" &&
                     ghostId === self.presence.playerId && (
-                      <Ghost size={14} className="ml-auto text-red-500 glow-ghost-strong" />
+                      <Ghost size={14} className="ml-auto text-red-500" />
                     )}
                 </div>
               )}
@@ -228,9 +241,14 @@ export function Sidebar() {
                   >
                     <div
                       className="w-2.5 h-2.5 rounded-sm cursor-glow"
-                      style={{ backgroundColor: o.presence.color, color: o.presence.color }}
+                      style={{
+                        backgroundColor: o.presence.color,
+                        color: o.presence.color,
+                      }}
                     />
-                    <span className="text-text-secondary uppercase tracking-wider">{o.presence.name}</span>
+                    <span className="text-text-secondary uppercase tracking-wider">
+                      {o.presence.name}
+                    </span>
                   </div>
                 ))}
               {others.filter((o) => o.presence.name !== "").length === 0 &&

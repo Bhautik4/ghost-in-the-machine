@@ -37,17 +37,15 @@ export function RoleBanner({ isGhost }: RoleBannerProps) {
           }`}
         >
           {isGhost ? (
-            <Ghost size={64} className="text-ghost glow-ghost-strong" />
+            <Ghost size={64} className="text-ghost" />
           ) : (
-            <Shield size={64} className="text-accent-glow glow-accent-strong" />
+            <Shield size={64} className="text-accent-glow" />
           )}
         </div>
 
         <h2
           className={`text-4xl font-black uppercase tracking-[0.2em] mb-6 ${
-            isGhost 
-              ? "text-ghost glow-ghost-strong" 
-              : "text-accent-glow glow-accent-strong"
+            isGhost ? "text-ghost" : "text-accent-glow"
           }`}
         >
           {isGhost ? "You are the Ghost" : "You are an Engineer"}

@@ -66,14 +66,14 @@ export function CodeEditor() {
         )
       ) {
         return (
-          <span key={i} className="text-accent-glow glow-keyword">
+          <span key={i} className="text-accent-glow">
             {part}
           </span>
         );
       }
       if (/^["'`]/.test(part)) {
         return (
-          <span key={i} className="text-success-light glow-string">
+          <span key={i} className="text-success-light">
             {part}
           </span>
         );
@@ -87,7 +87,7 @@ export function CodeEditor() {
       }
       if (/^\d+$/.test(part)) {
         return (
-          <span key={i} className="text-warning-light glow-number">
+          <span key={i} className="text-warning-light">
             {part}
           </span>
         );
@@ -101,7 +101,7 @@ export function CodeEditor() {
       }
       if (/^[A-Z]/.test(part)) {
         return (
-          <span key={i} className="text-info-light glow-type">
+          <span key={i} className="text-info-light">
             {part}
           </span>
         );
@@ -141,7 +141,7 @@ export function CodeEditor() {
               key={i}
               className={`text-xs leading-6 ${
                 errorLines.has(i + 1)
-                  ? "text-red-500 glow-ghost-strong font-bold"
+                  ? "text-red-500 font-bold"
                   : "text-text-faint"
               }`}
             >

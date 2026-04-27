@@ -5,6 +5,7 @@ import {
   useMutation,
   useBroadcastEvent,
   useStorage,
+  useOthers,
 } from "@liveblocks/react/suspense";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Bug, Undo2, Eye, Zap, EyeOff, Shuffle, Skull } from "lucide-react";
@@ -34,6 +35,7 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
   >({});
   const broadcast = useBroadcastEvent();
   const editorContent = useStorage((root) => root.editorContent);
+  const others = useOthers();
 
   // Tick every second to update remaining cooldown display
   useEffect(() => {
@@ -67,7 +69,16 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
       const fixedTasks = allTasks.filter((t) => {
         const raw = content[t.id];
         const code = typeof raw === "string" ? raw : t.buggyCode;
-        return code.trim() === t.fixedCode.trim();
+        return (
+          code
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/\s*\/>/g, " />") ===
+          t.fixedCode
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/\s*\/>/g, " />")
+        );
       });
       if (fixedTasks.length === 0) return;
       const target = fixedTasks[Math.floor(Math.random() * fixedTasks.length)];
@@ -87,7 +98,16 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
       const unfixed = allTasks.filter((t) => {
         const raw = content[t.id];
         const code = typeof raw === "string" ? raw : t.buggyCode;
-        return code.trim() !== t.fixedCode.trim();
+        return (
+          code
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/\s*\/>/g, " />") !==
+          t.fixedCode
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/\s*\/>/g, " />")
+        );
       });
       if (unfixed.length === 0) return;
       const target = unfixed[Math.floor(Math.random() * unfixed.length)];
@@ -108,22 +128,32 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
     startCooldown("blackout", 45000);
   }, [cooldowns, broadcast, increaseParanoia]);
 
-  // ── 4. Phantom Cursor: fake cursor with random player color ──
+  // ── 4. Phantom Cursor: fake cursor with a real player's name/color ──
   const spawnPhantom = useCallback(() => {
     if (cooldowns["phantom"]) return;
-    const colors = ["#6d28d9", "#2563eb", "#059669", "#d97706"];
-    const names = ["alice", "bob", "charlie", "dev_01"];
+    // Pick a random real player from the room
+    const players = others
+      .map((o) => ({
+        name: o.presence.name as string,
+        color: o.presence.color as string,
+      }))
+      .filter((p) => p.name);
+    const fallback = { name: "engineer", color: "#6d28d9" };
+    const pick =
+      players.length > 0
+        ? players[Math.floor(Math.random() * players.length)]
+        : fallback;
     broadcast({
       type: "phantom-cursor",
       line: Math.floor(Math.random() * 8) + 1,
       col: Math.floor(Math.random() * 30) + 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      name: names[Math.floor(Math.random() * names.length)],
+      color: pick.color,
+      name: pick.name,
       duration: 6000,
     });
     increaseParanoia(2);
     startCooldown("phantom", 12000);
-  }, [cooldowns, broadcast, increaseParanoia]);
+  }, [cooldowns, broadcast, increaseParanoia, others]);
 
   // ── 5. Subtle Corrupt: swap one char in a random task ────────
   const subtleCorrupt = useMutation(
@@ -257,13 +287,10 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
 
   return (
     <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 font-mono">
-      <div className="bg-surface-deep/95 backdrop-blur-xl border border-ghost/40 rounded-sm p-4 shadow-ghost">
-        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/20 pb-2">
-          <Skull
-            size={14}
-            className="text-ghost animate-pulse glow-ghost-strong"
-          />
-          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em] glow-ghost">
+      <div className="bg-surface-raised/95 backdrop-blur-xl border border-ghost/50 rounded-sm p-4 shadow-ghost">
+        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/30 pb-2">
+          <Skull size={14} className="text-ghost animate-pulse" />
+          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em]">
             Ghost Control Protocol
           </span>
         </div>
@@ -277,15 +304,10 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
               className={`flex flex-col items-center justify-center gap-1.5 w-24 h-20 rounded-sm text-[10px] uppercase font-bold tracking-widest transition-all ${
                 cooldowns[key]
                   ? "bg-surface/50 text-text-faint border border-border/50 cursor-not-allowed"
-                  : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 border-glow-ghost hover:shadow-ghost-strong"
+                  : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 hover:shadow-ghost-strong"
               }`}
             >
-              <Icon
-                size={18}
-                className={
-                  !cooldowns[key] ? "glow-accent" : ""
-                }
-              />
+              <Icon size={18} className={!cooldowns[key] ? "" : ""} />
               <span className="text-center px-1 leading-tight">{label}</span>
               {cooldowns[key] && (
                 <span className="text-[9px] text-ghost/50 mt-1 tabular-nums">

@@ -112,12 +112,12 @@ export function GameChat() {
           setIsOpen(true);
           setUnread(0);
         }}
-        className="flex items-center gap-2 px-3 py-2 bg-surface-deep/90 backdrop-blur-md border border-border/50 rounded-sm text-[10px] text-text-subtle hover:text-accent-soft hover:border-accent/50 transition-all shadow-lg font-mono uppercase tracking-widest"
+        className="flex items-center gap-2 px-3 py-2 bg-surface-raised/90 backdrop-blur-md border border-border rounded-sm text-[10px] text-text-subtle hover:text-accent-soft hover:border-accent/50 transition-all shadow-lg font-mono uppercase tracking-widest"
       >
         <MessageSquare size={12} />
         Team Chat
         {unread > 0 && (
-          <span className="ml-1 px-1.5 py-0.5 bg-accent text-white rounded-sm text-[9px] shadow-accent">
+          <span className="ml-1 px-1.5 py-0.5 bg-accent text-white rounded-sm text-[9px]">
             {unread}
           </span>
         )}
@@ -128,9 +128,9 @@ export function GameChat() {
 
   return (
     <div className="w-72 font-mono">
-      <div className="bg-surface-deep/95 backdrop-blur-md border border-border/50 rounded-sm shadow-xl shadow-black/50 overflow-hidden flex flex-col">
+      <div className="bg-surface-raised/95 backdrop-blur-md border border-border rounded-sm shadow-xl shadow-black/50 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-surface/50">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-overlay/50">
           <div className="flex items-center gap-2">
             <MessageSquare size={12} className="text-accent-soft" />
             <span className="text-[10px] text-text-primary uppercase tracking-[0.2em] font-bold">
@@ -161,13 +161,11 @@ export function GameChat() {
               className="text-[11px] leading-relaxed break-words"
             >
               {msg.playerId === "system" ? (
-                <span className="text-success italic glow-success">
-                  {msg.text}
-                </span>
+                <span className="text-success italic">{msg.text}</span>
               ) : (
                 <>
                   <span
-                    className="font-bold uppercase tracking-wider glow-accent"
+                    className="font-bold uppercase tracking-wider"
                     style={{ color: msg.color }}
                   >
                     {msg.playerName}
@@ -181,7 +179,7 @@ export function GameChat() {
         </div>
 
         {/* Input */}
-        <div className="flex items-center gap-2 px-3 py-2 border-t border-border/50 bg-surface/30">
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-border bg-surface-overlay/30">
           <span className="text-accent-soft text-xs font-bold">&gt;</span>
           <input
             value={input}

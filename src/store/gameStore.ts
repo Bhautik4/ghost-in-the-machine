@@ -8,6 +8,19 @@ import type {
   GamePhase,
 } from "@/types/game";
 
+/** Normalize code for comparison: trim + collapse whitespace + normalize self-closing tags */
+function normalizeCode(code: string): string {
+  return code
+    .split("\n")
+    .map((line) =>
+      line
+        .trimEnd()
+        .replace(/\s+/g, " ")
+        .replace(/\s*\/>/g, " />"),
+    )
+    .join("\n")
+    .trim();
+}
 const PLAYER_COLORS = [
   "#6d28d9",
   "#2563eb",
@@ -290,7 +303,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Auto-check if fixed
     const task = tasks.find((t) => t.id === taskId);
-    if (task && task.currentCode.trim() === task.fixedCode.trim()) {
+    if (
+      task &&
+      normalizeCode(task.currentCode) === normalizeCode(task.fixedCode)
+    ) {
       const updatedTasks = tasks.map((t) =>
         t.id === taskId ? { ...t, isFixed: true } : t,
       );
@@ -307,7 +323,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   checkTaskFixed: (taskId) => {
     const task = get().tasks.find((t) => t.id === taskId);
-    return task ? task.currentCode.trim() === task.fixedCode.trim() : false;
+    return task
+      ? normalizeCode(task.currentCode) === normalizeCode(task.fixedCode)
+      : false;
   },
 
   setActiveTab: (tab) => set({ activeTab: tab }),

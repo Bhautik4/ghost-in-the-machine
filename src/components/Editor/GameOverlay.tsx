@@ -107,17 +107,15 @@ export function GameOverlay({ roomCode }: GameOverlayProps) {
           }`}
         >
           {isGhostWin ? (
-            <Skull size={48} className="text-ghost glow-ghost-strong" />
+            <Skull size={48} className="text-ghost" />
           ) : (
-            <Trophy size={48} className="text-success glow-success-strong" />
+            <Trophy size={48} className="text-success" />
           )}
         </div>
 
         <h2
           className={`text-4xl font-black uppercase tracking-[0.2em] mb-4 relative z-10 ${
-            isGhostWin
-              ? "text-ghost glow-ghost-strong"
-              : "text-success glow-success-strong"
+            isGhostWin ? "text-ghost" : "text-success"
           }`}
         >
           {isGhostWin ? "System Failure" : "System Restored"}
@@ -131,17 +129,14 @@ export function GameOverlay({ roomCode }: GameOverlayProps) {
 
         {ghostName && (
           <p className="text-xs text-text-subtle mb-8 font-bold uppercase tracking-widest relative z-10">
-            The Ghost was:{" "}
-            <span className="text-ghost glow-ghost-strong ml-1">
-              {ghostName}
-            </span>
+            The Ghost was: <span className="text-ghost ml-1">{ghostName}</span>
           </p>
         )}
 
         <div className="flex gap-4 justify-center relative z-10">
           <button
             onClick={handlePlayAgain}
-            className="flex-1 px-6 py-3 bg-accent/20 text-accent-soft border border-accent/50 hover:bg-accent/40 hover:text-white rounded-sm text-xs font-bold uppercase tracking-widest transition-all shadow-accent hover:shadow-accent-strong flex items-center justify-center gap-2"
+            className="flex-1 px-6 py-3 bg-accent/20 text-accent-soft border border-accent/50 hover:bg-accent/40 hover:text-white rounded-sm text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
           >
             <RotateCcw size={16} />
             Play Again

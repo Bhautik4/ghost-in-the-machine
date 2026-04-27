@@ -165,14 +165,14 @@ export function Lobby({ roomCode }: LobbyProps) {
     return (
       <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
         <div className="text-center">
-          <UserX size={48} className="text-red-500/80 mx-auto mb-6 glow-ghost-strong" />
-          <h2 className="text-2xl font-bold text-text-primary mb-3 uppercase tracking-widest">Room Full</h2>
+          <UserX size={48} className="text-red-500/80 mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-text-primary mb-3 uppercase tracking-widest">
+            Room Full
+          </h2>
           <p className="text-sm text-text-subtle mb-8 uppercase tracking-wider">
             This room already has {MAX_PLAYERS} players.
           </p>
-          <a
-            href="/"
-          >
+          <a href="/">
             <Button variant="secondary">Back to Home</Button>
           </a>
         </div>
@@ -186,14 +186,16 @@ export function Lobby({ roomCode }: LobbyProps) {
       <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
         <div className="w-full max-w-md mx-4">
           <div className="text-center mb-10 flex flex-col items-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6 shadow-accent-strong">
+            <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6">
               <Ghost size={32} className="text-accent-soft" />
             </div>
             <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
               Ghost in the Machine
             </h1>
             <div className="mt-4 flex items-center gap-2">
-              <span className="text-[10px] text-text-subtle uppercase tracking-widest">Room</span>
+              <span className="text-[10px] text-text-subtle uppercase tracking-widest">
+                Room
+              </span>
               <span className="text-sm text-accent-soft tracking-[0.3em] uppercase bg-accent/10 px-3 py-1 border border-accent/30">
                 {roomCode}
               </span>
@@ -239,7 +241,10 @@ export function Lobby({ roomCode }: LobbyProps) {
                   >
                     <div
                       className="w-2.5 h-2.5 rounded-sm cursor-glow"
-                      style={{ backgroundColor: o.presence.color, color: o.presence.color }}
+                      style={{
+                        backgroundColor: o.presence.color,
+                        color: o.presence.color,
+                      }}
                     />
                     <span className="text-sm text-text-secondary uppercase tracking-wider">
                       {o.presence.name}
@@ -259,7 +264,7 @@ export function Lobby({ roomCode }: LobbyProps) {
     <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
       <div className="w-full max-w-md mx-4">
         <div className="text-center mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6 shadow-accent-strong">
+          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6">
             <Ghost size={32} className="text-accent-soft" />
           </div>
           <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
@@ -268,7 +273,9 @@ export function Lobby({ roomCode }: LobbyProps) {
           {/* Room code + copy link */}
           <div className="mt-4 flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-text-subtle uppercase tracking-widest">Room</span>
+              <span className="text-[10px] text-text-subtle uppercase tracking-widest">
+                Room
+              </span>
               <span className="text-sm text-accent-soft tracking-[0.3em] uppercase bg-accent/10 px-3 py-1 border border-accent/30">
                 {roomCode}
               </span>
@@ -314,10 +321,10 @@ export function Lobby({ roomCode }: LobbyProps) {
                   )}
                 </span>
                 {player.playerId === hostPlayerId && (
-                  <Crown size={12} className="text-warning shrink-0 glow-warning" />
+                  <Crown size={12} className="text-warning shrink-0" />
                 )}
                 {player.isReady ? (
-                  <Check size={14} className="text-green-500 shrink-0 glow-success-strong" />
+                  <Check size={14} className="text-green-500 shrink-0" />
                 ) : (
                   <span className="text-[10px] text-text-faint shrink-0 tracking-widest uppercase">
                     waiting
@@ -340,7 +347,10 @@ export function Lobby({ roomCode }: LobbyProps) {
             onClick={toggleReady}
             className={`flex-1 gap-2 ${self?.presence.isReady ? "text-green-400 border-green-500/30 hover:bg-green-500/10 hover:text-green-300" : ""}`}
           >
-            <Check size={16} className={self?.presence.isReady ? "text-green-500 glow-success-strong" : ""} />
+            <Check
+              size={16}
+              className={self?.presence.isReady ? "text-green-500" : ""}
+            />
             {self?.presence.isReady ? "Ready!" : "Ready Up"}
           </Button>
           {isHost && (
@@ -359,7 +369,7 @@ export function Lobby({ roomCode }: LobbyProps) {
         <div
           className={`mt-6 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest ${isHost ? "text-warning" : "text-text-faint"}`}
         >
-          <Crown size={10} className={isHost ? "glow-warning" : ""} />
+          <Crown size={10} />
           <span>
             {isHost ? "You are the Host" : "Waiting for host to start..."}
           </span>

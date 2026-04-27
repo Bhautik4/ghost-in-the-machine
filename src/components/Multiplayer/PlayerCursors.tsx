@@ -19,13 +19,16 @@ export function PlayerCursors() {
           className="absolute pointer-events-none z-30 transition-all duration-150 font-mono"
           style={{
             top: `${(other.presence.cursor!.line - 1) * 24 + 16}px`,
-            left: `${other.presence.cursor!.col * 7.8 + 20}px`,
+            left: `${other.presence.cursor!.col * 8.4 + 20}px`,
           }}
         >
           {/* Cursor line */}
           <div
             className="w-[2px] h-5 rounded-full cursor-glow"
-            style={{ backgroundColor: other.presence.color, color: other.presence.color }}
+            style={{
+              backgroundColor: other.presence.color,
+              color: other.presence.color,
+            }}
           />
           {/* Name tag */}
           <div

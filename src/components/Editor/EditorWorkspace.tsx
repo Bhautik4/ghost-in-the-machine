@@ -18,7 +18,6 @@ import { DemonVoiceListener } from "@/components/Multiplayer/DemonVoiceListener"
 import { RoleBanner } from "@/components/Editor/RoleBanner";
 
 import { BlackoutOverlay } from "@/components/Editor/BlackoutOverlay";
-import { PhantomCursors } from "@/components/Editor/PhantomCursors";
 import { ParanoiaEffects } from "@/components/Editor/ParanoiaEffects";
 import { SoundEngine } from "@/components/Editor/SoundEngine";
 import { WhisperEngine } from "@/components/Editor/WhisperEngine";
@@ -112,18 +111,30 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden relative">
         <GameEditor isGhost={isGhost} roomCode={roomCode} />
-        <PhantomCursors />
-        <GameHUD isGhost={isGhost} />
         <GhostControls isGhost={isGhost} roomCode={roomCode} />
-        {/* Right-side panel stack — flex column to prevent overlap */}
-        <div className="absolute bottom-4 right-4 z-50 flex flex-col gap-3 items-end max-h-[calc(100%-2rem)] overflow-y-auto">
-          {isGhost && <GhostTaunts />}
-          <GhostHauntButton isGhost={isGhost} />
-          <GameChat />
-        </div>
+        {/* Right-side column — HUD fixed at top, panels scroll below */}
+        {phase === "playing" && (
+          <div className="absolute top-4 bottom-4 right-4 z-60 flex flex-col gap-3 items-end pointer-events-none">
+            <div className="pointer-events-auto shrink-0">
+              <GameHUD isGhost={isGhost} />
+            </div>
+            <div className="flex flex-col gap-3 items-end overflow-y-auto min-h-0 flex-1">
+              {isGhost && (
+                <div className="pointer-events-auto shrink-0">
+                  <GhostTaunts />
+                </div>
+              )}
+              <div className="pointer-events-auto shrink-0">
+                <GhostHauntButton isGhost={isGhost} />
+              </div>
+              <div className="pointer-events-auto shrink-0">
+                <GameChat />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      <StatusBar />
       <GameOverlay roomCode={roomCode} />
     </div>
   );

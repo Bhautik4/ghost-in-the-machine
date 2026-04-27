@@ -107,7 +107,7 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
             title="Hold to talk"
           >
             {isRecording ? (
-              <Radio size={14} className="animate-pulse glow-accent" />
+              <Radio size={14} className="animate-pulse" />
             ) : isProcessing ? (
               <div className="w-3.5 h-3.5 border-2 border-text-faint border-t-transparent rounded-full animate-spin" />
             ) : (

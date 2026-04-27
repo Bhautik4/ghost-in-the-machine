@@ -39,18 +39,16 @@ export function TabBar() {
             <FileText
               size={14}
               className={
-                tab.endsWith(".tsx") 
-                  ? "text-info-blue glow-file-tsx" 
-                  : "text-player-cyan glow-info"
+                tab.endsWith(".tsx") ? "text-info-blue" : "text-player-cyan"
               }
             />
             <span>{tab}</span>
 
             {status === "error" && (
-              <Circle size={6} className="fill-ghost text-ghost glow-ghost" />
+              <Circle size={6} className="fill-ghost text-ghost" />
             )}
             {status === "fixed" && (
-              <CheckCircle2 size={12} className="text-success glow-success" />
+              <CheckCircle2 size={12} className="text-success" />
             )}
 
             <X

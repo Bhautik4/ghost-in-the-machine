@@ -19,15 +19,15 @@ summary {
 
 @theme {
   /* ── Surfaces ─────────────────────────────────────────────── */
-  --color-surface-deep: #09090b;
-  --color-surface: #18181b;
-  --color-surface-raised: #1e1e22;
-  --color-surface-overlay: #27272a;
+  --color-surface-deep: #0c0c0f;
+  --color-surface: #1a1a1f;
+  --color-surface-raised: #222228;
+  --color-surface-overlay: #2a2a30;
   --color-surface-hover: #3f3f46;
 
   /* ── Borders ──────────────────────────────────────────────── */
-  --color-border: #27272a;
-  --color-border-subtle: #1e1e22;
+  --color-border: #3a3a42;
+  --color-border-subtle: #2a2a30;
 
   /* ── Text ──────────────────────────────────────────────────── */
   --color-text-primary: #e4e4e7;
@@ -209,104 +209,35 @@ body {
   color: var(--color-text-primary);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Glow & Shadow Utilities
-   Reusable classes instead of inline drop-shadow/rgba values.
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Text/icon glows */
-.glow-accent {
-  filter: drop-shadow(0 0 3px var(--color-accent-glow));
-}
-.glow-accent-strong {
-  filter: drop-shadow(0 0 8px var(--color-accent-soft));
-}
-.glow-ghost {
-  filter: drop-shadow(0 0 3px var(--color-ghost));
-}
-.glow-ghost-strong {
-  filter: drop-shadow(0 0 8px var(--color-ghost));
-}
-.glow-success {
-  filter: drop-shadow(0 0 3px var(--color-success));
-}
-.glow-success-strong {
-  filter: drop-shadow(0 0 5px var(--color-success));
-}
-.glow-warning {
-  filter: drop-shadow(0 0 3px var(--color-warning));
-}
-.glow-warning-strong {
-  filter: drop-shadow(0 0 5px var(--color-warning-light));
-}
-.glow-info {
-  filter: drop-shadow(0 0 3px var(--color-info-light));
-}
-.glow-info-strong {
-  filter: drop-shadow(0 0 5px var(--color-info-light));
-}
-.glow-keyword {
-  filter: drop-shadow(0 0 3px var(--color-syntax-keyword));
-}
-.glow-string {
-  filter: drop-shadow(0 0 3px var(--color-syntax-string));
-}
-.glow-number {
-  filter: drop-shadow(0 0 3px var(--color-syntax-number));
-}
-.glow-type {
-  filter: drop-shadow(0 0 3px var(--color-syntax-type));
-}
-.glow-file-tsx {
-  filter: drop-shadow(0 0 3px var(--color-file-tsx));
-}
-.glow-file-ts {
-  filter: drop-shadow(0 0 3px var(--color-file-ts));
-}
-.glow-file-js {
-  filter: drop-shadow(0 0 3px var(--color-file-js));
-}
-.glow-ghost-light {
-  filter: drop-shadow(0 0 3px var(--color-ghost-light));
-}
-
-/* Box shadows */
-.shadow-accent {
-  box-shadow: 0 0 15px rgba(109, 40, 217, 0.2);
-}
-.shadow-accent-strong {
-  box-shadow: 0 0 20px rgba(109, 40, 217, 0.4);
-}
-.shadow-ghost {
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
-}
-.shadow-ghost-strong {
-  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
-}
-.shadow-success {
-  box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
-}
-.shadow-warning {
-  box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
-}
-.shadow-info {
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
-}
-
-/* Neon border glows (for panels) */
-.border-glow-accent {
-  box-shadow: 0 0 10px rgba(109, 40, 217, 0.1);
-}
-.border-glow-ghost {
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
-}
+/* Box shadows — disabled for cleaner look */
+.shadow-ghost,
+.shadow-ghost-strong,
+.shadow-success,
+.shadow-warning,
+.shadow-info,
+.border-glow-accent,
+.border-glow-ghost,
 .border-glow-success {
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.1);
+  box-shadow: none;
+}
+
+/* Override Tailwind built-in shadows globally */
+*,
+*::before,
+*::after {
+  --tw-shadow: 0 0 #0000 !important;
+  --tw-shadow-colored: 0 0 #0000 !important;
+  --tw-drop-shadow: drop-shadow(0 0 #0000) !important;
 }
 
 /* Cursor glow */
 .cursor-glow {
-  box-shadow: 0 0 8px currentColor;
+  box-shadow: none;
+}
+
+/* contentEditable code editor lines */
+.code-line {
+  min-height: 1.5rem; /* matches leading-6 */
 }
 
 /* CRT scanline effect for overlays */

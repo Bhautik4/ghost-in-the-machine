@@ -31,7 +31,7 @@ export function BlackoutOverlay({ isGhost }: BlackoutOverlayProps) {
     >
       {!isGhost && (
         <div className="h-full flex items-center justify-center font-mono">
-          <p className="text-sm text-red-500/60 animate-pulse uppercase tracking-[0.3em] glow-ghost-strong">
+          <p className="text-sm text-red-500/60 animate-pulse uppercase tracking-[0.3em]">
             [SYSTEM FAILURE] Power grid offline...
           </p>
         </div>
