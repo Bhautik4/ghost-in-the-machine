@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useEventListener } from "@liveblocks/react/suspense";
+import { playCachedSfx } from "@/lib/sfxCache";
+import { playBlackout } from "@/lib/sounds";
+import { voiceManager } from "@/lib/voiceManager";
 
 interface BlackoutOverlayProps {
   isGhost: boolean;
@@ -17,7 +20,16 @@ export function BlackoutOverlay({ isGhost }: BlackoutOverlayProps) {
   useEventListener(({ event }) => {
     if (event.type === "blackout") {
       setActive(true);
-      setTimeout(() => setActive(false), event.duration);
+      // Apply voice blackout effect
+      voiceManager.applyBlackoutEffect(true);
+      // Play blackout audio (ElevenLabs cache → Web Audio fallback)
+      if (!playCachedSfx("blackout", 0.5)) {
+        playBlackout();
+      }
+      setTimeout(() => {
+        setActive(false);
+        voiceManager.applyBlackoutEffect(false);
+      }, event.duration);
     }
   });
 

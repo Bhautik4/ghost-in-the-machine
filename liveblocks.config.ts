@@ -14,6 +14,7 @@ declare global {
       isReady: boolean;
       color: string;
       cursor: { line: number; col: number } | null;
+      voiceEnabled: boolean;
     };
 
     Storage: {
@@ -60,6 +61,7 @@ declare global {
     RoomEvent:
       | { type: "demon-voice"; audioBase64: string; senderName: string }
       | { type: "blackout"; duration: number }
+      | { type: "screen-glitch"; duration: number }
       | {
           type: "phantom-cursor";
           line: number;
@@ -88,7 +90,26 @@ declare global {
             | "vote-called"
             | "time-warning"
             | "game-over";
-        };
+        }
+      | {
+          type: "voice-offer";
+          targetPlayerId: string;
+          fromPlayerId: string;
+          offer: string;
+        }
+      | {
+          type: "voice-answer";
+          targetPlayerId: string;
+          fromPlayerId: string;
+          answer: string;
+        }
+      | {
+          type: "voice-ice";
+          targetPlayerId: string;
+          fromPlayerId: string;
+          candidate: string;
+        }
+      | { type: "voice-disconnect"; fromPlayerId: string };
     ThreadMetadata: Record<string, never>;
   }
 }

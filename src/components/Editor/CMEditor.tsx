@@ -187,6 +187,18 @@ export function CMEditor({
     const view = new EditorView({ state, parent: containerRef.current });
     viewRef.current = view;
 
+    // Disable Grammarly / spellcheck / autocorrect on the contenteditable element
+    const cmContent = containerRef.current.querySelector(".cm-content");
+    if (cmContent) {
+      cmContent.setAttribute("data-gramm", "false");
+      cmContent.setAttribute("data-gramm_editor", "false");
+      cmContent.setAttribute("data-enable-grammarly", "false");
+      cmContent.setAttribute("spellcheck", "false");
+      cmContent.setAttribute("autocorrect", "off");
+      cmContent.setAttribute("autocapitalize", "off");
+      cmContent.setAttribute("data-ms-editor", "false");
+    }
+
     return () => {
       view.destroy();
       viewRef.current = null;
@@ -271,6 +283,13 @@ export function CMEditor({
     <div
       ref={containerRef}
       className="relative flex-1 min-h-full overflow-hidden"
+      data-gramm="false"
+      data-gramm_editor="false"
+      data-enable-grammarly="false"
+      spellCheck={false}
+      autoCorrect="off"
+      autoCapitalize="off"
+      data-ms-editor="false"
     >
       {/* Cursor overlays rendered as React elements */}
       {cursorPositions.map((c) => (

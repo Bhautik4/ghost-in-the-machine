@@ -102,8 +102,19 @@ export default function Home() {
         )}
 
         <p className="text-[10px] text-surface-hover text-center mt-8 uppercase tracking-widest">
-          Up to 4 players per room · 4-minute rounds
+          Up to 4 players per room · 4-minute rounds · Voice chat built-in
         </p>
+
+        <div className="text-center mt-4">
+          <a
+            href="/rules"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-accent-soft hover:text-accent-glow uppercase tracking-[0.2em] transition-colors"
+          >
+            How to Play →
+          </a>
+        </div>
       </div>
     </div>
   );

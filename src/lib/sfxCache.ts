@@ -48,6 +48,12 @@ const SFX_PROMPTS: { name: string; prompt: string; duration: number }[] = [
       "level up sound effect, ascending digital tones, achievement unlocked notification",
     duration: 1,
   },
+  {
+    name: "screen-glitch",
+    prompt:
+      "harsh digital glitch distortion burst, corrupted signal static noise, cyberpunk interference",
+    duration: 1.5,
+  },
 ];
 
 /** Pre-generate all SFX clips via ElevenLabs. Fire-and-forget on game start. */

@@ -8,7 +8,7 @@ import {
   useOthers,
 } from "@liveblocks/react/suspense";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Undo2, Eye, Zap, EyeOff, Skull } from "lucide-react";
+import { Undo2, Eye, Zap, EyeOff, Skull, Monitor } from "lucide-react";
 
 import { useGameScenario } from "@/lib/useGameScenario";
 import { getInvalidationCascade } from "@/lib/chainValidator";
@@ -165,7 +165,15 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
     startCooldown("blackout", 45000);
   }, [cooldowns, broadcast, increaseParanoia]);
 
-  // ── 4. Phantom Cursor: fake cursor with a real player's name/color ──
+  // ── 4. Screen Glitch: distort engineers' screens ─────────────────
+  const triggerGlitch = useCallback(() => {
+    if (cooldowns["glitch"]) return;
+    broadcast({ type: "screen-glitch", duration: 3000 });
+    increaseParanoia(6);
+    startCooldown("glitch", 30000);
+  }, [cooldowns, broadcast, increaseParanoia]);
+
+  // ── 5. Phantom Cursor: fake cursor with a real player's name/color ──
   const spawnPhantom = useCallback(() => {
     if (cooldowns["phantom"]) return;
     const players = others
@@ -214,6 +222,13 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
       label: "Blackout",
       desc: "5s dark screen for engineers",
       abilityFn: triggerBlackout,
+    },
+    {
+      key: "glitch",
+      icon: Monitor,
+      label: "Glitch",
+      desc: "3s screen distortion for engineers",
+      abilityFn: triggerGlitch,
     },
     {
       key: "phantom",

@@ -8,6 +8,7 @@ import {
 } from "@liveblocks/react/suspense";
 import { Ghost, Radio } from "lucide-react";
 import { useGameStore } from "@/store/gameStore";
+import { voiceManager } from "@/lib/voiceManager";
 
 interface GhostHauntButtonProps {
   isGhost: boolean;
@@ -101,6 +102,7 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
         if (recordingMs < 500) {
           console.warn("Recording too short, skipping voice processing");
           setIsProcessing(false);
+          voiceManager.setHauntActive(false);
           return;
         }
 
@@ -144,6 +146,7 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
           console.error("Demon voice pipeline failed:", err);
         } finally {
           setIsProcessing(false);
+          voiceManager.setHauntActive(false);
         }
       };
 
@@ -151,6 +154,7 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
       mediaRecorderRef.current = mediaRecorder;
       recordStartRef.current = Date.now();
       setIsRecording(true);
+      voiceManager.setHauntActive(true);
 
       // Auto-stop after 15s so mic doesn't stay hot
       maxRecordingTimerRef.current = setTimeout(() => {

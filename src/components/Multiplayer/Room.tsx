@@ -66,6 +66,7 @@ export function Room({ roomId = "ghost-machine-lobby", children }: RoomProps) {
           isReady: false,
           color,
           cursor: null,
+          voiceEnabled: false,
         }}
         initialStorage={{
           gameStatus: "waiting",

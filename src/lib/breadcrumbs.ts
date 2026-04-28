@@ -33,6 +33,12 @@ const TEMPLATES: Record<string, string[]> = {
     "[SYSTEM] Anomalous input stream — {name} appears to be editing from two locations",
     "[ALERT] Session conflict: {name}'s cursor position out of sync",
   ],
+  glitch: [
+    "[CRITICAL] GPU buffer overflow from {name}'s rendering pipeline",
+    "[WARN] Display driver fault traced to {name}'s session",
+    "[ALERT] Frame corruption detected — source: {name}'s video output",
+    "[SYSTEM] Signal integrity failure linked to {name}'s client",
+  ],
 };
 
 /**

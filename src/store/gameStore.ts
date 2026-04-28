@@ -190,7 +190,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   tasks: INITIAL_TASKS,
   paranoiaMeter: 0,
   ghostEvents: [],
-  timeRemaining: 240,
+  timeRemaining: 3600,
   activeTab: "Main.ts",
   terminalLines: [
     "$ ghost-machine init",
@@ -226,7 +226,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // This method only resets local game state for the playing phase.
     set({
       phase: "playing",
-      timeRemaining: 240,
+      timeRemaining: 3600,
       paranoiaMeter: 0,
       tasks: INITIAL_TASKS.map((t) => ({
         ...t,
@@ -260,7 +260,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       tasks: INITIAL_TASKS,
       paranoiaMeter: 0,
       ghostEvents: [],
-      timeRemaining: 240,
+      timeRemaining: 3600,
       terminalLines: [
         "$ ghost-machine reset",
         "Resetting workspace...",

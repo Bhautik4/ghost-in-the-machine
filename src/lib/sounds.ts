@@ -72,6 +72,31 @@ export function playTimeWarning() {
   osc.stop(ctx.currentTime + 0.15);
 }
 
+/** Harsh digital glitch burst */
+export function playGlitch() {
+  const ctx = getCtx();
+  // Rapid noise burst with bitcrusher feel
+  const bufferSize = ctx.sampleRate * 0.6;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    // Alternating noise and silence for a choppy digital glitch
+    data[i] = i % 200 < 120 ? (Math.random() * 2 - 1) * 0.6 : 0;
+  }
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.25, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6);
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 2000;
+  filter.Q.value = 5;
+  source.connect(filter).connect(gain).connect(ctx.destination);
+  source.start(ctx.currentTime);
+  source.stop(ctx.currentTime + 0.6);
+}
+
 /** Dramatic game over sound */
 export function playGameOver() {
   const ctx = getCtx();
@@ -113,7 +138,7 @@ export function startAmbientDrone(): () => void {
   osc1.connect(masterGain);
   osc2.connect(masterGain);
   masterGain.connect(ctx.destination);
-  masterGain.gain.value = 0.04;
+  masterGain.gain.value = 0.015;
 
   osc1.start();
   osc2.start();
@@ -148,6 +173,9 @@ export function playSfx(sound: string) {
       break;
     case "game-over":
       playGameOver();
+      break;
+    case "screen-glitch":
+      playGlitch();
       break;
   }
 }

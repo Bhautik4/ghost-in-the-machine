@@ -16,11 +16,14 @@ import { GhostHauntButton } from "@/components/Multiplayer/GhostHauntButton";
 import { GhostTaunts } from "@/components/Multiplayer/GhostTaunts";
 import { DemonVoiceListener } from "@/components/Multiplayer/DemonVoiceListener";
 import { RoleBanner } from "@/components/Editor/RoleBanner";
+import { VoiceChat } from "@/components/Multiplayer/VoiceChat";
 
 import { BlackoutOverlay } from "@/components/Editor/BlackoutOverlay";
+import { GlitchOverlay } from "@/components/Editor/GlitchOverlay";
 import { ParanoiaEffects } from "@/components/Editor/ParanoiaEffects";
 import { SoundEngine } from "@/components/Editor/SoundEngine";
 import { WhisperEngine } from "@/components/Editor/WhisperEngine";
+import { NarratorEngine } from "@/components/Editor/NarratorEngine";
 import { BreadcrumbToast } from "@/components/Editor/BreadcrumbToast";
 import { EditActivityLog } from "@/components/Editor/EditActivityLog";
 import { useGameStore } from "@/store/gameStore";
@@ -95,7 +98,9 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
       <RoleBanner isGhost={isGhost} />
       <ParanoiaEffects />
       <BlackoutOverlay isGhost={isGhost} />
+      <GlitchOverlay isGhost={isGhost} />
       <SoundEngine />
+      <NarratorEngine />
       {!isGhost && <DemonVoiceListener />}
       {!isGhost && <WhisperEngine />}
 
@@ -168,7 +173,7 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
           </div>
         )}
       </div>
-
+      <VoiceChat isGhost={isGhost} />
       <GameOverlay roomCode={roomCode} />
     </div>
   );

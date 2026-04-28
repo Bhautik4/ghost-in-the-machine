@@ -2,6 +2,7 @@
 
 import { useGameStore } from "@/store/gameStore";
 import { useEffect, useState } from "react";
+import { voiceManager } from "@/lib/voiceManager";
 
 /**
  * Progressive UI distortion based on paranoia level.
@@ -14,6 +15,13 @@ export function ParanoiaEffects() {
   const { paranoiaMeter, phase } = useGameStore();
   const [glitchActive, setGlitchActive] = useState(false);
   const [tearActive, setTearActive] = useState(false);
+
+  // Drive voice distortion from paranoia level
+  useEffect(() => {
+    if (phase === "playing") {
+      voiceManager.applyParanoiaEffect(paranoiaMeter);
+    }
+  }, [phase, paranoiaMeter]);
 
   // Random micro-glitches at high paranoia
   useEffect(() => {
