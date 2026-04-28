@@ -46,6 +46,7 @@ export function Lobby({ roomCode }: LobbyProps) {
   const [hasJoined, setHasJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const updateMyPresence = useUpdateMyPresence();
   const self = useSelf();
@@ -63,6 +64,9 @@ export function Lobby({ roomCode }: LobbyProps) {
       storage.set("editorContent", {});
       storage.set("fakedTasks", {});
       storage.set("activeVote", null);
+      storage.set("generatedScenario", null);
+      storage.set("fileVerification", {});
+      storage.set("systemStatus", "degraded");
     }
   }, []);
 
@@ -138,8 +142,36 @@ export function Lobby({ roomCode }: LobbyProps) {
     updateMyPresence({ isReady: !self.presence.isReady });
   }, [self, updateMyPresence]);
 
-  // Start game
-  const handleStartGame = useMutation(
+  // Store generated scenario in Liveblocks
+  const storeGeneratedScenario = useMutation(
+    (
+      { storage },
+      scenario: {
+        description: string;
+        files: {
+          id: string;
+          fileName: string;
+          label: string;
+          description: string;
+          buggyCode: string;
+          fixedCode: string;
+          stage: 1 | 2 | 3;
+          testCases: {
+            description: string;
+            assertion: string;
+            crossFile?: boolean;
+          }[];
+        }[];
+        dependencyGraph: Record<string, string[]>;
+      },
+    ) => {
+      storage.set("generatedScenario", scenario);
+    },
+    [],
+  );
+
+  // Start game (assigns ghost, stores tasks, sets status)
+  const startGameInStorage = useMutation(
     ({ storage }) => {
       const players = allJoinedPlayers;
       if (players.length < 2) return;
@@ -149,6 +181,37 @@ export function Lobby({ roomCode }: LobbyProps) {
     },
     [allJoinedPlayers],
   );
+
+  const handleStartGame = async () => {
+    if (!canStart || isGenerating) return;
+    setIsGenerating(true);
+
+    try {
+      // Generate scenario via LLM
+      const res = await fetch("/api/generate-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomCode }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.scenario) {
+          storeGeneratedScenario(data.scenario);
+        }
+      }
+    } catch (err) {
+      console.warn(
+        "[Lobby] Scenario generation failed, using static scenario:",
+        err,
+      );
+      // generatedScenario stays null → components fall back to static
+    }
+
+    // Start the game regardless of generation result
+    startGameInStorage();
+    setIsGenerating(false);
+  };
 
   // Copy invite link
   const copyInviteLink = () => {
@@ -357,11 +420,20 @@ export function Lobby({ roomCode }: LobbyProps) {
             <Button
               variant="primary"
               onClick={() => handleStartGame()}
-              disabled={!canStart}
+              disabled={!canStart || isGenerating}
               className="flex-1 gap-2"
             >
-              <Play size={16} />
-              Start Game
+              {isGenerating ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Play size={16} />
+                  Start Game
+                </>
+              )}
             </Button>
           )}
         </div>

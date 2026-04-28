@@ -8,9 +8,11 @@ import {
   useOthers,
 } from "@liveblocks/react/suspense";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Bug, Undo2, Eye, Zap, EyeOff, Shuffle, Skull } from "lucide-react";
+import { Undo2, Eye, Zap, EyeOff, Skull } from "lucide-react";
 
-import { getTasksForRoom } from "@/lib/taskBank";
+import { useGameScenario } from "@/lib/useGameScenario";
+import { getInvalidationCascade } from "@/lib/chainValidator";
+import { pickBreadcrumb } from "@/lib/breadcrumbs";
 
 interface GhostControlsProps {
   isGhost: boolean;
@@ -23,18 +25,17 @@ interface GhostControlsProps {
  */
 export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
   const { phase, increaseParanoia } = useGameStore();
-  const allTasks = getTasksForRoom(roomCode);
+  const { files, dependencyGraph } = useGameScenario(roomCode);
   const [cooldowns, setCooldowns] = useState<Record<string, boolean>>({});
-  // Stores the expiry timestamp for each ability (ms since epoch)
   const [cooldownExpiry, setCooldownExpiry] = useState<Record<string, number>>(
     {},
   );
-  // Live remaining seconds for display
   const [cooldownRemaining, setCooldownRemaining] = useState<
     Record<string, number>
   >({});
   const broadcast = useBroadcastEvent();
   const editorContent = useStorage((root) => root.editorContent);
+  const fileVerification = useStorage((root) => root.fileVerification);
   const others = useOthers();
 
   // Tick every second to update remaining cooldown display
@@ -61,63 +62,99 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
     setCooldowns((prev) => ({ ...prev, [key]: true }));
   };
 
-  // ── 1. Inject Bug: revert a random fixed task to buggy ──────
+  // Track last blamed engineer to avoid repeats
+  const lastBlamedRef = useRef<string | undefined>(undefined);
+  const othersRef = useRef(others);
+  const broadcastRef = useRef(broadcast);
+  useEffect(() => {
+    othersRef.current = others;
+  }, [others]);
+  useEffect(() => {
+    broadcastRef.current = broadcast;
+  }, [broadcast]);
+
+  /** Broadcast a false breadcrumb blaming a random engineer */
+  const sendBreadcrumb = useCallback((ability: string) => {
+    const engineerNames = othersRef.current
+      .map((o) => o.presence.name as string)
+      .filter((n) => n !== "");
+
+    const result = pickBreadcrumb(
+      ability,
+      engineerNames,
+      lastBlamedRef.current,
+    );
+    if (!result) return;
+
+    lastBlamedRef.current = result.blamedName;
+
+    const delay = 500 + Math.random() * 1500;
+    setTimeout(() => {
+      broadcastRef.current({ type: "breadcrumb", message: result.message });
+    }, delay);
+  }, []);
+
+  // ── 1. Inject Bug: revert a verified file to buggy + cascade invalidation ──
   const injectBug = useMutation(
     ({ storage }) => {
       if (cooldowns["inject"]) return;
       const content = { ...storage.get("editorContent") };
-      const fixedTasks = allTasks.filter((t) => {
-        const raw = content[t.id];
-        const code = typeof raw === "string" ? raw : t.buggyCode;
+      const verification = storage.get("fileVerification");
+
+      // Find files that are verified or have been fixed
+      const fixedFiles = files.filter((f) => {
+        if (verification[f.id]?.verified) return true;
+        const raw = content[f.id];
+        const code = typeof raw === "string" ? raw : f.buggyCode;
         return (
-          code
-            .trim()
-            .replace(/\s+/g, " ")
-            .replace(/\s*\/>/g, " />") ===
-          t.fixedCode
-            .trim()
-            .replace(/\s+/g, " ")
-            .replace(/\s*\/>/g, " />")
+          code.trim().replace(/\s+/g, " ") ===
+          f.fixedCode.trim().replace(/\s+/g, " ")
         );
       });
-      if (fixedTasks.length === 0) return;
-      const target = fixedTasks[Math.floor(Math.random() * fixedTasks.length)];
+
+      if (fixedFiles.length === 0) return;
+      const target = fixedFiles[Math.floor(Math.random() * fixedFiles.length)];
+
+      // Revert to buggy code
       content[target.id] = target.buggyCode;
       storage.set("editorContent", content);
+
+      // Cascade invalidation: target + all dependents
+      const cascade = getInvalidationCascade(target.id, dependencyGraph);
+      const updatedVerification = { ...verification };
+      for (const id of cascade) {
+        delete updatedVerification[id];
+      }
+      storage.set("fileVerification", updatedVerification);
+      storage.set("systemStatus", "degraded");
+
       increaseParanoia(5);
       startCooldown("inject", 20000);
     },
-    [cooldowns, editorContent],
+    [cooldowns, files, dependencyGraph],
   );
 
-  // ── 2. Fake Fix: make a task appear fixed for 15s ────────────
+  // ── 2. Fake Fix: make a file appear verified for 15s ────────────
   const fakeFix = useMutation(
     ({ storage }) => {
       if (cooldowns["fake"]) return;
-      const content = storage.get("editorContent");
-      const unfixed = allTasks.filter((t) => {
-        const raw = content[t.id];
-        const code = typeof raw === "string" ? raw : t.buggyCode;
-        return (
-          code
-            .trim()
-            .replace(/\s+/g, " ")
-            .replace(/\s*\/>/g, " />") !==
-          t.fixedCode
-            .trim()
-            .replace(/\s+/g, " ")
-            .replace(/\s*\/>/g, " />")
-        );
-      });
-      if (unfixed.length === 0) return;
-      const target = unfixed[Math.floor(Math.random() * unfixed.length)];
+      const verification = storage.get("fileVerification");
+
+      // Find unverified files
+      const unverified = files.filter((f) => !verification[f.id]?.verified);
+      if (unverified.length === 0) return;
+
+      const target = unverified[Math.floor(Math.random() * unverified.length)];
+
+      // Use fakedTasks storage (reusing existing mechanism) for the 15s fake
       const faked = { ...storage.get("fakedTasks") };
       faked[target.id] = Date.now() + 15000;
       storage.set("fakedTasks", faked);
+
       increaseParanoia(3);
       startCooldown("fake", 25000);
     },
-    [cooldowns],
+    [cooldowns, files],
   );
 
   // ── 3. Blackout: 5s dark screen for engineers ────────────────
@@ -131,7 +168,6 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
   // ── 4. Phantom Cursor: fake cursor with a real player's name/color ──
   const spawnPhantom = useCallback(() => {
     if (cooldowns["phantom"]) return;
-    // Pick a random real player from the room
     const players = others
       .map((o) => ({
         name: o.presence.name as string,
@@ -155,83 +191,6 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
     startCooldown("phantom", 12000);
   }, [cooldowns, broadcast, increaseParanoia, others]);
 
-  // ── 5. Subtle Corrupt: swap one char in a random task ────────
-  const subtleCorrupt = useMutation(
-    ({ storage }) => {
-      if (cooldowns["corrupt"]) return;
-      const content = { ...storage.get("editorContent") };
-      const taskIds = Object.keys(content).filter((id) => {
-        const task = allTasks.find((t) => t.id === id);
-        if (!task) return false;
-        const code = typeof content[id] === "string" ? content[id] : "";
-        return (code as string).length > 10;
-      });
-      if (taskIds.length === 0) return;
-      const targetId = taskIds[Math.floor(Math.random() * taskIds.length)];
-      const code = content[targetId] as string;
-      const swaps: Record<string, string> = {
-        "===": "==",
-        "==": "=",
-        ";": "",
-        "(": "[",
-        ")": "]",
-        const: "let",
-        true: "false",
-        ".": ",",
-        "!==": "===",
-      };
-      const keys = Object.keys(swaps);
-      for (const key of keys) {
-        const idx = code.indexOf(key);
-        if (idx !== -1) {
-          content[targetId] =
-            code.substring(0, idx) +
-            swaps[key] +
-            code.substring(idx + key.length);
-          break;
-        }
-      }
-      storage.set("editorContent", content);
-      increaseParanoia(4);
-      startCooldown("corrupt", 15000);
-    },
-    [cooldowns],
-  );
-
-  // ── 6. Variable Scrambler: rename variables in a random task ─
-  const variableScrambler = useMutation(
-    ({ storage }) => {
-      if (cooldowns["scramble"]) return;
-      const content = { ...storage.get("editorContent") };
-      const taskIds = Object.keys(content).filter((id) => {
-        return (
-          allTasks.some((t) => t.id === id) && typeof content[id] === "string"
-        );
-      });
-      if (taskIds.length === 0) return;
-      const targetId = taskIds[Math.floor(Math.random() * taskIds.length)];
-      let code = content[targetId] as string;
-      // Scramble common variable names
-      const renames: [RegExp, string][] = [
-        [/\bnode\b/g, "nde"],
-        [/\bresult\b/g, "reslt"],
-        [/\bcurrent\b/g, "currnt"],
-        [/\btarget\b/g, "targt"],
-        [/\bvisited\b/g, "visted"],
-        [/\bqueue\b/g, "queu"],
-        [/\bhead\b/g, "hed"],
-        [/\bdepth\b/g, "dpth"],
-      ];
-      const pick = renames[Math.floor(Math.random() * renames.length)];
-      code = code.replace(pick[0], pick[1]);
-      content[targetId] = code;
-      storage.set("editorContent", content);
-      increaseParanoia(6);
-      startCooldown("scramble", 45000); // 45-second cooldown
-    },
-    [cooldowns],
-  );
-
   if (phase !== "playing" || !isGhost) return null;
 
   const abilities = [
@@ -239,49 +198,29 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
       key: "inject",
       icon: Undo2,
       label: "Inject Bug",
-      desc: "Revert a fixed task silently",
-      action: () => injectBug(),
-      cd: 20,
+      desc: "Revert a fixed file + cascade",
+      abilityFn: injectBug,
     },
     {
       key: "fake",
       icon: Eye,
       label: "Fake Fix",
-      desc: "Task looks fixed for 15s",
-      action: () => fakeFix(),
-      cd: 25,
+      desc: "File looks verified for 15s",
+      abilityFn: fakeFix,
     },
     {
       key: "blackout",
       icon: EyeOff,
       label: "Blackout",
       desc: "5s dark screen for engineers",
-      action: triggerBlackout,
-      cd: 45,
+      abilityFn: triggerBlackout,
     },
     {
       key: "phantom",
       icon: Zap,
-      label: "Phantom",
+      label: "Fake Cursor",
       desc: "Spawn a fake player cursor",
-      action: spawnPhantom,
-      cd: 12,
-    },
-    {
-      key: "corrupt",
-      icon: Bug,
-      label: "Corrupt",
-      desc: "Swap a character in code",
-      action: () => subtleCorrupt(),
-      cd: 15,
-    },
-    {
-      key: "scramble",
-      icon: Shuffle,
-      label: "Scrambler",
-      desc: "Rename variables in code",
-      action: () => variableScrambler(),
-      cd: 45,
+      abilityFn: spawnPhantom,
     },
   ];
 
@@ -295,10 +234,13 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
           </span>
         </div>
         <div className="flex gap-2">
-          {abilities.map(({ key, icon: Icon, label, desc, action, cd }) => (
+          {abilities.map(({ key, icon: Icon, label, desc, abilityFn }) => (
             <button
               key={key}
-              onClick={action}
+              onClick={() => {
+                abilityFn();
+                sendBreadcrumb(key);
+              }}
               disabled={cooldowns[key]}
               title={desc}
               className={`flex flex-col items-center justify-center gap-1.5 w-24 h-20 rounded-sm text-[10px] uppercase font-bold tracking-widest transition-all ${
@@ -307,7 +249,7 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
                   : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 hover:shadow-ghost-strong"
               }`}
             >
-              <Icon size={18} className={!cooldowns[key] ? "" : ""} />
+              <Icon size={18} />
               <span className="text-center px-1 leading-tight">{label}</span>
               {cooldowns[key] && (
                 <span className="text-[9px] text-ghost/50 mt-1 tabular-nums">

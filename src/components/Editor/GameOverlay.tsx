@@ -35,6 +35,9 @@ export function GameOverlay({ roomCode }: GameOverlayProps) {
     storage.set("editorContent", {});
     storage.set("fakedTasks", {});
     storage.set("activeVote", null);
+    storage.set("generatedScenario", null);
+    storage.set("fileVerification", {});
+    storage.set("systemStatus", "degraded");
   }, []);
 
   // Play victory/defeat narration via ElevenLabs TTS

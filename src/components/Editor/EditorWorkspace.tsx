@@ -21,10 +21,12 @@ import { BlackoutOverlay } from "@/components/Editor/BlackoutOverlay";
 import { ParanoiaEffects } from "@/components/Editor/ParanoiaEffects";
 import { SoundEngine } from "@/components/Editor/SoundEngine";
 import { WhisperEngine } from "@/components/Editor/WhisperEngine";
-import { GameChat } from "@/components/Editor/GameChat";
+import { BreadcrumbToast } from "@/components/Editor/BreadcrumbToast";
+import { EditActivityLog } from "@/components/Editor/EditActivityLog";
 import { useGameStore } from "@/store/gameStore";
 import { playGameOver } from "@/lib/sounds";
 import { MAX_GAME_DURATION_MS } from "@/lib/roomCode";
+import { useGameScenario } from "@/lib/useGameScenario";
 
 interface EditorWorkspaceProps {
   roomCode: string;
@@ -33,10 +35,13 @@ interface EditorWorkspaceProps {
 export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
   const gameStatus = useStorage((root) => root.gameStatus);
   const ghostId = useStorage((root) => root.ghostId);
+  const systemStatus = useStorage((root) => root.systemStatus);
+  const fileVerification = useStorage((root) => root.fileVerification);
   const self = useSelf();
   const others = useOthers();
   const { paranoiaMeter, ghostEvents, startGame, phase, endGame } =
     useGameStore();
+  const { scenario } = useGameScenario(roomCode);
 
   const gameStartRef = useRef(Date.now());
 
@@ -108,10 +113,39 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
         <div className="w-16" />
       </div>
 
+      {/* Scenario narrative banner + system status */}
+      {phase === "playing" && scenario && (
+        <div className="shrink-0 px-4 py-2 bg-warning/5 border-b border-warning/30 flex items-center gap-3 z-10">
+          <span
+            className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm border ${
+              systemStatus === "operational"
+                ? "text-success bg-success/10 border-success/30"
+                : "text-warning bg-warning/10 border-warning/30"
+            }`}
+          >
+            {systemStatus === "operational" ? "OPERATIONAL" : "DEGRADED"}{" "}
+            {
+              Object.values(fileVerification ?? {}).filter(
+                (v) =>
+                  v != null &&
+                  typeof v === "object" &&
+                  "verified" in v &&
+                  (v as { verified: boolean }).verified,
+              ).length
+            }
+            /{scenario.files.length}
+          </span>
+          <span className="text-[10px] text-text-muted uppercase tracking-wider truncate">
+            {scenario.description}
+          </span>
+        </div>
+      )}
+
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden relative">
         <GameEditor isGhost={isGhost} roomCode={roomCode} />
         <GhostControls isGhost={isGhost} roomCode={roomCode} />
+        <BreadcrumbToast />
         {/* Right-side column — HUD fixed at top, panels scroll below */}
         {phase === "playing" && (
           <div className="absolute top-4 bottom-4 right-4 z-60 flex flex-col gap-3 items-end pointer-events-none">
@@ -128,7 +162,7 @@ export function EditorWorkspace({ roomCode }: EditorWorkspaceProps) {
                 <GhostHauntButton isGhost={isGhost} />
               </div>
               <div className="pointer-events-auto shrink-0">
-                <GameChat />
+                <EditActivityLog />
               </div>
             </div>
           </div>

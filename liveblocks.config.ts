@@ -21,7 +21,7 @@ declare global {
       ghostId: string | null;
       hostPlayerId: string | null;
       editorContent: Record<string, string>;
-      /** Tracks which tasks the ghost has faked as "fixed" — taskId → expiry timestamp */
+      /** Tracks which files the ghost has faked as "verified" — fileId → expiry timestamp */
       fakedTasks: Record<string, number>;
       /** Active vote: who called it, who they're accusing, and votes cast */
       activeVote: {
@@ -31,6 +31,29 @@ declare global {
         votes: Record<string, "guilty" | "innocent">;
         expiresAt: number;
       } | null;
+      /** LLM-generated scenario for this game session. Null = use static fallback. */
+      generatedScenario: {
+        description: string;
+        files: {
+          id: string;
+          fileName: string;
+          label: string;
+          description: string;
+          buggyCode: string;
+          fixedCode: string;
+          stage: 1 | 2 | 3;
+          testCases: {
+            description: string;
+            assertion: string;
+            crossFile?: boolean;
+          }[];
+        }[];
+        dependencyGraph: Record<string, string[]>;
+      } | null;
+      /** Per-file verification status — fileId → { verified, status } */
+      fileVerification: Record<string, { verified: boolean; status: string }>;
+      /** System-wide status derived from chain validation */
+      systemStatus: "operational" | "degraded";
     };
 
     UserMeta: Record<string, never>;
@@ -46,11 +69,16 @@ declare global {
           duration: number;
         }
       | {
-          type: "chat";
-          playerId: string;
+          type: "breadcrumb";
+          message: string;
+        }
+      | {
+          type: "edit-activity";
           playerName: string;
-          text: string;
-          color: string;
+          playerColor: string;
+          fileName: string;
+          charsChanged: number;
+          isLargeEdit: boolean;
         }
       | {
           type: "sfx";

@@ -74,6 +74,9 @@ export function Room({ roomId = "ghost-machine-lobby", children }: RoomProps) {
           editorContent: {},
           fakedTasks: {},
           activeVote: null,
+          generatedScenario: null,
+          fileVerification: {},
+          systemStatus: "degraded" as const,
         }}
       >
         <ClientSideSuspense

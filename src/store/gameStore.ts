@@ -4,7 +4,6 @@ import type {
   Player,
   CodeTask,
   GhostEvent,
-  ChatMessage,
   GamePhase,
 } from "@/types/game";
 
@@ -182,9 +181,6 @@ interface GameStore extends GameState {
 
   // Terminal
   addTerminalLine: (line: string) => void;
-
-  // Chat
-  addChatMessage: (msg: Omit<ChatMessage, "id" | "timestamp">) => void;
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -194,7 +190,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
   tasks: INITIAL_TASKS,
   paranoiaMeter: 0,
   ghostEvents: [],
-  chatMessages: [],
   timeRemaining: 240,
   activeTab: "Main.ts",
   terminalLines: [
@@ -360,14 +355,5 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   addTerminalLine: (line) => {
     set({ terminalLines: [...get().terminalLines, line] });
-  },
-
-  addChatMessage: (msg) => {
-    const message: ChatMessage = {
-      ...msg,
-      id: `msg-${Date.now()}`,
-      timestamp: Date.now(),
-    };
-    set({ chatMessages: [...get().chatMessages, message] });
   },
 }));

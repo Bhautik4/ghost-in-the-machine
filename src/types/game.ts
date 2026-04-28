@@ -36,23 +36,12 @@ export interface GhostEvent {
   duration: number;
 }
 
-export interface ChatMessage {
-  id: string;
-  playerId: string;
-  playerName: string;
-  text: string;
-  timestamp: number;
-  isVoice?: boolean;
-  isDistorted?: boolean;
-}
-
 export interface GameState {
   phase: GamePhase;
   players: Player[];
   tasks: CodeTask[];
   paranoiaMeter: number;
   ghostEvents: GhostEvent[];
-  chatMessages: ChatMessage[];
   timeRemaining: number;
   activeTab: string;
   terminalLines: string[];
