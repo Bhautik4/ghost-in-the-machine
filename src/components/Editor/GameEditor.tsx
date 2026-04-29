@@ -19,6 +19,8 @@ import {
   Ban,
   FlaskConical,
   Terminal,
+  AlertTriangle,
+  ShieldCheck,
 } from "lucide-react";
 import { useGameStore } from "@/store/gameStore";
 import { useGameScenario } from "@/lib/useGameScenario";
@@ -567,6 +569,57 @@ export function GameEditor({
             verifying={verifying}
             testCount={activeFile.testCases.length}
           />
+        )}
+
+        {/* ── Security Scan results ─────────────────────── */}
+        {scanResult !== null && !isGhost && (
+          <div className="border-t border-border bg-surface-deep shrink-0">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-border/60">
+              {scanResult.length === 0 ? (
+                <ShieldCheck size={13} className="text-success" />
+              ) : (
+                <AlertTriangle size={13} className="text-warning" />
+              )}
+              <span className="text-xs font-medium text-text-secondary">
+                Security Scan
+              </span>
+              <span
+                className={`text-xs ml-auto ${
+                  scanResult.length === 0 ? "text-success" : "text-warning"
+                }`}
+              >
+                {scanResult.length === 0
+                  ? "No suspicious edits detected"
+                  : `${scanResult.length} suspicious line${scanResult.length !== 1 ? "s" : ""} found`}
+              </span>
+            </div>
+            <div className="px-3 py-2 max-h-28 overflow-y-auto">
+              {scanResult.length === 0 ? (
+                <p className="text-xs text-text-muted font-mono">
+                  All lines match original or fixed code. No Ghost edits
+                  detected.
+                </p>
+              ) : (
+                <ul className="space-y-0.5">
+                  {scanResult.map((loc, i) => (
+                    <li
+                      key={i}
+                      className="flex items-center gap-2 text-xs font-mono"
+                    >
+                      <AlertTriangle
+                        size={11}
+                        className="text-warning shrink-0"
+                      />
+                      <span className="text-warning-light">{loc}</span>
+                      <span className="text-text-subtle">
+                        — does not match original or fix
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </div>
