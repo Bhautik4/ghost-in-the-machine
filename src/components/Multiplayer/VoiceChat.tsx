@@ -103,8 +103,8 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
   if (phase !== "playing") return null;
 
   return (
-    <div className="absolute bottom-4 right-4 z-50 font-mono">
-      <div className="flex items-center gap-1.5 bg-surface/90 backdrop-blur-md border border-border/50 rounded-sm p-1.5 shadow-xl">
+    <div className="">
+      <div className="flex items-center gap-1.5">
         {/* Mute my mic */}
         <button
           onClick={toggleMic}
@@ -118,20 +118,20 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
                   ? "Unmute mic"
                   : "Mute mic"
           }
-          className={`p-2 rounded-sm transition-all border ${
+          className={`p-1.5 rounded-lg transition-all border ${
             !micAllowed
-              ? "bg-surface-deep/50 text-text-faint border-border/30 cursor-not-allowed"
+              ? "bg-surface-raised text-text-faint border-border cursor-not-allowed"
               : hauntActive
-                ? "bg-ghost/10 text-ghost border-ghost/30 cursor-not-allowed"
+                ? "bg-ghost/10 text-ghost border-ghost/20 cursor-not-allowed"
                 : micMuted
-                  ? "bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20"
-                  : "bg-surface-deep text-text-muted border-border/50 hover:text-text-primary hover:border-border"
+                  ? "bg-ghost/10 text-ghost-light border-ghost/20 hover:bg-ghost/15"
+                  : "bg-surface-raised text-text-muted border-border hover:text-text-primary hover:border-surface-hover"
           }`}
         >
           {micMuted || hauntActive || !micAllowed ? (
-            <MicOff size={16} />
+            <MicOff size={14} />
           ) : (
-            <Mic size={16} />
+            <Mic size={14} />
           )}
         </button>
 
@@ -139,13 +139,13 @@ export function VoiceChat({ isGhost }: VoiceChatProps) {
         <button
           onClick={toggleOthers}
           title={othersMuted ? "Unmute others" : "Mute others' voice"}
-          className={`p-2 rounded-sm transition-all border ${
+          className={`p-1.5 rounded-lg transition-all border ${
             othersMuted
-              ? "bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20"
-              : "bg-surface-deep text-text-muted border-border/50 hover:text-text-primary hover:border-border"
+              ? "bg-ghost/10 text-ghost-light border-ghost/20 hover:bg-ghost/15"
+              : "bg-surface-raised text-text-muted border-border hover:text-text-primary hover:border-surface-hover"
           }`}
         >
-          {othersMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          {othersMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
         </button>
       </div>
     </div>

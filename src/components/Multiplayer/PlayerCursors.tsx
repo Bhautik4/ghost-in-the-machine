@@ -24,18 +24,17 @@ export function PlayerCursors() {
         >
           {/* Cursor line */}
           <div
-            className="w-[2px] h-5 rounded-full cursor-glow"
+            className="w-[2px] h-5 rounded-full"
             style={{
               backgroundColor: other.presence.color,
-              color: other.presence.color,
             }}
           />
           {/* Name tag */}
           <div
-            className="absolute -top-6 left-0 px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wider whitespace-nowrap shadow-lg"
+            className="absolute -top-6 left-0 px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap"
             style={{
               backgroundColor: other.presence.color,
-              color: "#fff",
+              color: "#111111",
             }}
           >
             {other.presence.name}

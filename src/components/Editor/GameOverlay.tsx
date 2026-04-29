@@ -72,11 +72,9 @@ export function GameOverlay({ roomCode }: GameOverlayProps) {
       }
     }
 
-    // Slight delay so the overlay renders first
     setTimeout(playNarration, 800);
   }, [phase]);
 
-  // Reset narration flag when game resets
   useEffect(() => {
     if (phase === "lobby") {
       narratedRef.current = false;
@@ -98,55 +96,64 @@ export function GameOverlay({ roomCode }: GameOverlayProps) {
   };
 
   return (
-    <div className="absolute inset-0 z-50 bg-surface-deep/95 backdrop-blur-md flex items-center justify-center font-mono">
-      <div className="text-center p-8 max-w-md w-full border border-border/50 bg-surface/50 rounded-sm shadow-2xl relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20 scanline-crt" />
+    <div className="fixed inset-0 z-50 bg-surface-deep/95 backdrop-blur-md flex items-center justify-center animate-fade-in">
+      <div className="text-center p-8 max-w-md w-full mx-4 bg-surface border border-border rounded-lg relative overflow-hidden">
+        {/* Subtle CRT effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-10 scanline-crt" />
 
+        {/* Icon */}
         <div
-          className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 relative z-10 ${
+          className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 relative z-10 ${
             isGhostWin
-              ? "bg-ghost/10 border border-ghost/50 shadow-ghost-strong"
-              : "bg-success/10 border border-success/50 shadow-success"
+              ? "bg-ghost/10 border border-ghost/30"
+              : "bg-success/10 border border-success/30"
           }`}
         >
           {isGhostWin ? (
-            <Skull size={48} className="text-ghost" />
+            <Skull size={40} className="text-ghost" />
           ) : (
-            <Trophy size={48} className="text-success" />
+            <Trophy size={40} className="text-success" />
           )}
         </div>
 
+        {/* Title */}
         <h2
-          className={`text-4xl font-black uppercase tracking-[0.2em] mb-4 relative z-10 ${
-            isGhostWin ? "text-ghost" : "text-success"
+          className={`text-3xl font-bold mb-4 relative z-10 ${
+            isGhostWin ? "text-ghost-light" : "text-success-light"
           }`}
         >
           {isGhostWin ? "System Failure" : "System Restored"}
         </h2>
 
-        <p className="text-[13px] text-text-muted mb-4 leading-relaxed uppercase tracking-wider relative z-10">
+        {/* Description */}
+        <p className="text-sm text-text-muted mb-4 leading-relaxed relative z-10">
           {isGhostWin
             ? "The codebase has been consumed by darkness. The ghost reigns supreme."
             : "All bugs have been fixed. The ghost has been exorcised from the machine."}
         </p>
 
+        {/* Ghost reveal */}
         {ghostName && (
-          <p className="text-xs text-text-subtle mb-8 font-bold uppercase tracking-widest relative z-10">
-            The Ghost was: <span className="text-ghost ml-1">{ghostName}</span>
+          <p className="text-xs text-text-subtle mb-8 relative z-10">
+            The Ghost was:{" "}
+            <span className="text-ghost-light font-medium ml-1">
+              {ghostName}
+            </span>
           </p>
         )}
 
-        <div className="flex gap-4 justify-center relative z-10">
+        {/* Actions */}
+        <div className="flex gap-3 justify-center relative z-10">
           <button
             onClick={handlePlayAgain}
-            className="flex-1 px-6 py-3 bg-accent/20 text-accent-soft border border-accent/50 hover:bg-accent/40 hover:text-white rounded-sm text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+            className="flex-1 px-5 py-2.5 bg-accent/10 text-accent-light border border-accent/20 hover:bg-accent/15 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             <RotateCcw size={16} />
             Play Again
           </button>
           <a
             href="/"
-            className="flex-1 px-6 py-3 bg-surface text-text-muted border border-border hover:bg-border hover:text-white rounded-sm text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+            className="flex-1 px-5 py-2.5 bg-surface-raised text-text-muted border border-border hover:bg-surface-hover hover:text-text-primary rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             <Home size={16} />
             Disconnect

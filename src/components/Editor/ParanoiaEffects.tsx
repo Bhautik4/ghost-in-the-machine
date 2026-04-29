@@ -76,7 +76,7 @@ export function ParanoiaEffects() {
       {glitchActive && (
         <div className="fixed inset-0 pointer-events-none z-30">
           <div
-            className="absolute w-full h-1 shadow-ghost-strong"
+            className="absolute w-full h-1"
             style={{
               top: `${Math.random() * 100}%`,
               background:

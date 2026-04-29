@@ -13,23 +13,21 @@ import {
   FileText,
   CheckCircle2,
   Circle,
-  Bug,
-  ChevronDown,
-  ChevronRight,
-  Camera,
-  ScanSearch,
   Lock,
-  FlaskConical,
   Loader2,
   XCircle,
-  ArrowDown,
   Ban,
+  FlaskConical,
+  Terminal,
 } from "lucide-react";
 import { useGameStore } from "@/store/gameStore";
 import { useGameScenario } from "@/lib/useGameScenario";
 import { validateChain, getInvalidationCascade } from "@/lib/chainValidator";
 import { playTaskFixed } from "@/lib/sounds";
 import { CMEditor } from "@/components/Editor/CMEditor";
+import { FileSidebar } from "@/components/Editor/FileSidebar";
+import { GhostControls } from "@/components/Editor/GhostControls";
+import { VerifyPanel } from "@/components/Editor/VerifyPanel";
 import type { RunResult } from "@/lib/testRunner";
 
 export function GameEditor({
@@ -53,6 +51,7 @@ export function GameEditor({
   const [snapshotCooldownRemaining, setSnapshotCooldownRemaining] = useState(0);
   const [testResults, setTestResults] = useState<Record<string, RunResult>>({});
   const [verifying, setVerifying] = useState(false);
+  const [showTerminal, setShowTerminal] = useState(false);
   const scanExpiryRef = useRef(0);
   const snapshotExpiryRef = useRef(0);
   const updateMyPresence = useUpdateMyPresence();
@@ -187,6 +186,7 @@ export function GameEditor({
   /** Run chain validation for the entire system */
   const handleVerifySystem = useCallback(() => {
     setVerifying(true);
+    setShowTerminal(true);
 
     setTimeout(() => {
       const currentVerification: Record<string, boolean> = {};
@@ -421,186 +421,122 @@ export function GameEditor({
   if (!activeFile) return null;
 
   return (
-    <div className="flex-1 flex overflow-hidden font-mono">
-      {/* ── File sidebar ─────────────────────────────────── */}
-      <div className="w-64 bg-surface border-r border-border flex flex-col shrink-0">
-        <button
-          onClick={() => setTaskListOpen(!taskListOpen)}
-          className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted hover:text-text-primary border-b border-border transition-colors bg-surface-overlay/40"
-        >
-          {taskListOpen ? (
-            <ChevronDown size={14} />
-          ) : (
-            <ChevronRight size={14} />
-          )}
-          <Bug size={14} className="text-accent-soft" />
-          System Files ({passedCount}/{files.length})
-        </button>
-
-        <div className="px-4 py-2 border-b border-border bg-surface-overlay/30">
-          <span className="text-[10px] text-text-muted font-bold uppercase tracking-widest">
-            {scenarioLabel}
-          </span>
-        </div>
-        <div
-          className={`px-4 py-2 border-b border-border ${stageBg[currentStage]}`}
-        >
-          <span
-            className={`text-[11px] font-bold uppercase tracking-widest ${stageColors[currentStage]}`}
-          >
-            Stage {currentStage}/3
-          </span>
-          <span className="text-[10px] text-text-subtle ml-3 uppercase tracking-wider">
-            {currentStage === 1 && "Foundation"}
-            {currentStage === 2 && "Integration"}
-            {currentStage === 3 && "System"}
-          </span>
-        </div>
-
-        {taskListOpen && (
-          <div className="flex-1 overflow-y-auto py-2">
-            {files.map((file, idx) => {
-              const status = getFileStatus(file.id);
-              const isActive = file.id === activeFileId;
-              const locked = !unlockedFiles.some((f) => f.id === file.id);
-              const depLabel = getDependencyLabel(file.id);
-              return (
-                <div key={file.id}>
-                  {idx > 0 && (
-                    <div className="flex justify-center py-0.5">
-                      <ArrowDown size={10} className="text-text-faint" />
-                    </div>
-                  )}
-                  <button
-                    onClick={() => !locked && setActiveFileId(file.id)}
-                    disabled={locked}
-                    className={`w-full flex flex-col gap-0.5 px-4 py-2.5 text-xs transition-all ${
-                      locked
-                        ? "text-text-faint cursor-not-allowed opacity-50"
-                        : isActive
-                          ? "bg-accent/10 text-accent-soft border-l-[3px] border-accent"
-                          : "text-text-muted hover:bg-surface-raised border-l-[3px] border-transparent"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 w-full">
-                      {locked ? (
-                        <Lock size={14} className="shrink-0 text-text-faint" />
-                      ) : (
-                        getStatusIcon(status)
-                      )}
-                      <FileText
-                        size={14}
-                        className={`shrink-0 ${
-                          locked ? "text-text-faint" : "text-info"
-                        }`}
-                      />
-                      <span className="truncate tracking-wider">
-                        {file.fileName}
-                      </span>
-                      {!locked && (
-                        <span
-                          className={`ml-auto text-[9px] font-bold tracking-widest ${stageColors[file.stage]}`}
-                        >
-                          S{file.stage}
-                        </span>
-                      )}
-                    </div>
-                    {depLabel && !locked && (
-                      <span className="text-[9px] text-text-faint ml-8 tracking-wider">
-                        ↳ {depLabel}
-                      </span>
-                    )}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="border-t border-border px-4 py-3 bg-surface-overlay/30">
-          <p className="text-[10px] text-text-muted font-bold uppercase tracking-[0.2em] mb-2">
-            File Description
-          </p>
-          <p className="text-[11px] leading-relaxed text-text-secondary tracking-wide">
-            {activeFile.description}
-          </p>
-          {getFileStatus(activeFileId) === "passed" && (
-            <p className="text-[11px] text-success mt-2 font-bold uppercase tracking-widest">
-              ✓ Verified
-            </p>
-          )}
-          {getFileStatus(activeFileId) === "blocked" && (
-            <p className="text-[11px] text-warning mt-2 font-bold uppercase tracking-widest">
-              ⊘ Blocked — fix dependencies first
-            </p>
-          )}
-        </div>
-
-        {!isGhost && (
-          <div className="border-t border-border px-3 py-3 space-y-2 bg-surface-overlay/30">
-            <button
-              onClick={() => takeSnapshot()}
-              disabled={snapshotCooldown}
-              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
-                snapshotCooldown
-                  ? "bg-border/30 text-text-faint cursor-not-allowed border border-border/30"
-                  : "bg-player-cyan/10 text-info-light hover:bg-player-cyan/20 border border-player-cyan/30"
-              }`}
-            >
-              <Camera size={14} />
-              {snapshotCooldown
-                ? `Cooldown (${snapshotCooldownRemaining}s)`
-                : Object.keys(snapshots).length > 0
-                  ? "Update Snapshot"
-                  : "Take Snapshot"}
-            </button>
-            {Object.keys(snapshots).length > 0 && (
-              <button
-                onClick={() => revertToSnapshot()}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest bg-warning/10 text-warning-light hover:bg-warning/20 border border-warning/30 transition-all"
-              >
-                <Camera size={14} />
-                Revert System
-              </button>
-            )}
-            <button
-              onClick={runSecurityScan}
-              disabled={scanCooldown}
-              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
-                scanCooldown
-                  ? "bg-border/30 text-text-faint cursor-not-allowed border border-border/30"
-                  : "bg-accent/10 text-accent-glow hover:bg-accent/20 border border-accent/30"
-              }`}
-            >
-              <ScanSearch size={14} />
-              Security Scan {scanCooldown && `(${scanCooldownRemaining}s)`}
-            </button>
-          </div>
-        )}
+    <div className="flex-1 flex overflow-hidden">
+      {/* ── Left sidebar area ────────────────────────────── */}
+      <div className="w-64 bg-surface-deep border-r border-border flex flex-col shrink-0">
+        <FileSidebar
+          files={files}
+          activeFileId={activeFileId}
+          onSelectFile={setActiveFileId}
+          getFileStatus={getFileStatus}
+          unlockedFileIds={unlockedFiles.map((f) => f.id)}
+          getDependencyLabel={getDependencyLabel}
+          passedCount={passedCount}
+          currentStage={currentStage}
+          scenarioLabel={scenarioLabel}
+          isGhost={isGhost}
+          onTakeSnapshot={() => takeSnapshot()}
+          onRevertSnapshot={() => revertToSnapshot()}
+          onSecurityScan={runSecurityScan}
+          snapshotCooldown={snapshotCooldown}
+          snapshotCooldownRemaining={snapshotCooldownRemaining}
+          scanCooldown={scanCooldown}
+          scanCooldownRemaining={scanCooldownRemaining}
+          hasSnapshot={Object.keys(snapshots).length > 0}
+          taskListOpen={taskListOpen}
+          onToggleTaskList={() => setTaskListOpen(!taskListOpen)}
+        />
+        {/* Ghost abilities (ghost only, in left sidebar) */}
+        <GhostControls isGhost={isGhost} roomCode={roomCode} />
       </div>
 
       {/* ── Editor area (CodeMirror) ─────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-surface-deep min-w-0">
-        {/* Tab bar */}
-        <div className="h-10 bg-surface border-b border-border flex items-end">
-          <div className="relative h-full px-5 flex items-center gap-2.5 text-sm bg-surface-deep text-text-primary border-r border-border font-medium tracking-wider">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-accent-soft" />
+        {/* Tab bar with Verify button */}
+        <div className="h-10 bg-surface border-b border-border flex items-center">
+          <div className="relative h-full px-4 flex items-center gap-2 text-sm bg-surface-deep text-text-primary border-r border-border">
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-accent" />
             <FileText size={14} className="text-info" />
-            {activeFile.fileName}
+            <span className="font-mono">{activeFile.fileName}</span>
             {getFileStatus(activeFileId) === "passed" && (
-              <CheckCircle2 size={12} className="text-success ml-1" />
+              <CheckCircle2 size={12} className="text-success" />
             )}
-            <span
-              className={`text-xs ml-2 uppercase font-bold ${stageColors[activeFile.stage]}`}
-            >
+            <span className={`text-xs ${stageColors[activeFile.stage]}`}>
               S{activeFile.stage}
             </span>
           </div>
+
           <div className="flex-1" />
+
+          {/* Verify button in tab bar */}
+          {isFileUnlocked && (
+            <div className="flex items-center gap-2 px-3">
+              {/* Per-file status dots */}
+              <div className="flex items-center gap-1">
+                {files.map((f) => {
+                  const status = getFileStatus(f.id);
+                  return (
+                    <span key={f.id} title={`${f.fileName}: ${status}`}>
+                      {status === "passed" ? (
+                        <CheckCircle2 size={12} className="text-success" />
+                      ) : status === "failed" ? (
+                        <XCircle size={12} className="text-ghost" />
+                      ) : status === "blocked" ? (
+                        <Ban size={12} className="text-warning" />
+                      ) : (
+                        <Circle size={12} className="text-text-faint" />
+                      )}
+                    </span>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={handleVerifySystem}
+                disabled={verifying}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                  verifying
+                    ? "bg-accent/10 text-accent-soft border border-accent/20 cursor-wait"
+                    : "bg-accent/10 text-accent-light border border-accent/20 hover:bg-accent/15"
+                }`}
+              >
+                {verifying ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin" />
+                    Running...
+                  </>
+                ) : (
+                  <>
+                    <FlaskConical size={12} />
+                    Verify System
+                  </>
+                )}
+              </button>
+
+              {/* Toggle terminal */}
+              {Object.keys(testResults).length > 0 && (
+                <button
+                  onClick={() => setShowTerminal(!showTerminal)}
+                  className={`p-1 rounded transition-colors ${
+                    showTerminal
+                      ? "text-accent-light bg-accent/10"
+                      : "text-text-faint hover:text-text-muted"
+                  }`}
+                  title={showTerminal ? "Hide terminal" : "Show terminal"}
+                >
+                  <Terminal size={14} />
+                </button>
+              )}
+
+              <span className="text-xs text-text-subtle">
+                {activeFile.testCases.length} tests
+              </span>
+            </div>
+          )}
         </div>
 
         {/* CodeMirror editor */}
-        <div className="flex-1 relative overflow-hidden z-0">
+        <div className="flex-1 relative overflow-hidden z-0 min-h-0">
           <CMEditor
             key={activeFileId}
             content={currentContent}
@@ -612,110 +548,25 @@ export function GameEditor({
 
           {!isFileUnlocked && (
             <div className="absolute inset-0 bg-surface-deep/80 backdrop-blur-sm flex items-center justify-center z-20">
-              <div className="flex items-center gap-3 px-6 py-3 rounded-md bg-surface/90 border border-border text-text-muted text-xs font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-3 px-5 py-2.5 rounded-lg bg-surface border border-border text-text-muted text-xs">
                 <Lock size={16} className="text-accent-soft" />
-                <span>Unlocks at Stage {activeFile.stage}</span>
+                Unlocks at Stage {activeFile.stage}
               </div>
             </div>
           )}
         </div>
 
-        {/* Verify System Panel */}
-        {isFileUnlocked && (
-          <div className="border-t border-border bg-surface shrink-0">
-            {/* Verify button bar */}
-            <div className="flex items-center gap-3 px-4 py-2 border-b border-border/50">
-              <button
-                onClick={handleVerifySystem}
-                disabled={verifying}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  verifying
-                    ? "bg-accent/10 text-accent-soft border border-accent/30 cursor-wait"
-                    : "bg-accent/20 text-accent-glow border border-accent/50 hover:bg-accent/30 hover:border-accent/70 hover:shadow-accent-strong"
-                }`}
-              >
-                {verifying ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin" />
-                    Validating System...
-                  </>
-                ) : (
-                  <>
-                    <FlaskConical size={14} />
-                    Verify System
-                  </>
-                )}
-              </button>
-
-              {/* Per-file status summary */}
-              <div className="flex items-center gap-2 ml-2">
-                {files.map((f) => {
-                  const status = getFileStatus(f.id);
-                  return (
-                    <span
-                      key={f.id}
-                      className={`text-[10px] font-bold tracking-widest ${
-                        status === "passed"
-                          ? "text-success"
-                          : status === "failed"
-                            ? "text-ghost"
-                            : status === "blocked"
-                              ? "text-warning"
-                              : "text-text-faint"
-                      }`}
-                      title={`${f.fileName}: ${status}`}
-                    >
-                      {getStatusLabel(status)}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <span className="ml-auto text-[9px] text-text-faint uppercase tracking-widest">
-                {activeFile.testCases.length} test
-                {activeFile.testCases.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-
-            {/* Individual test results (shown after running) */}
-            {Object.keys(testResults).length > 0 && (
-              <div className="px-4 py-2 space-y-1 max-h-32 overflow-y-auto">
-                {testResults[activeFileId] ? (
-                  testResults[activeFileId].results.map((r, i) => (
-                    <div
-                      key={i}
-                      className={`flex items-start gap-2 text-[10px] tracking-wider ${
-                        r.passed ? "text-success/80" : "text-ghost/80"
-                      }`}
-                    >
-                      {r.passed ? (
-                        <CheckCircle2 size={12} className="shrink-0 mt-0.5" />
-                      ) : (
-                        <XCircle size={12} className="shrink-0 mt-0.5" />
-                      )}
-                      <div>
-                        <span className="font-bold">
-                          {r.passed ? "PASS" : "FAIL"}
-                        </span>
-                        <span className="text-text-muted ml-2">
-                          {r.description}
-                        </span>
-                        {r.error && !r.passed && (
-                          <p className="text-ghost/60 mt-0.5 text-[9px]">
-                            {r.error}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-[9px] text-text-faint uppercase tracking-widest py-1">
-                    No test results for this file — click Verify System to run
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+        {/* ── Terminal output (collapsible) ─────────────── */}
+        {showTerminal && Object.keys(testResults).length > 0 && (
+          <VerifyPanel
+            files={files}
+            activeFileId={activeFileId}
+            testResults={testResults}
+            getFileStatus={getFileStatus}
+            onVerify={handleVerifySystem}
+            verifying={verifying}
+            testCount={activeFile.testCases.length}
+          />
         )}
       </div>
     </div>

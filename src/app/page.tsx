@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Ghost, Plus, LogIn, Loader2 } from "lucide-react";
+import { Ghost, Plus, LogIn } from "lucide-react";
 import { generateRoomCode } from "@/lib/roomCode";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -32,17 +32,17 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
+    <div className="h-screen w-screen bg-surface-deep flex items-center justify-center">
       <div className="w-full max-w-md mx-4">
-        {/* Logo */}
-        <div className="text-center mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6">
-            <Ghost size={32} className="text-accent-soft" />
+        {/* Logo & Title */}
+        <div className="text-center mb-12 flex flex-col items-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg border border-accent/40 bg-accent/5 mb-6">
+            <Ghost size={30} className="text-accent-soft" />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
+          <h1 className="text-3xl font-bold text-text-primary tracking-wide">
             Ghost in the Machine
           </h1>
-          <p className="text-sm text-text-subtle mt-3 uppercase tracking-wider">
+          <p className="text-sm text-text-muted mt-2">
             A real-time social deduction game for coders
           </p>
         </div>
@@ -56,18 +56,16 @@ export default function Home() {
             onClick={handleCreate}
             className="gap-2.5"
           >
-            <Plus size={18} />
+            <Plus size={20} />
             Create Game
           </Button>
         </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-3 mb-6 opacity-60">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-[10px] text-text-faint uppercase tracking-[0.2em]">
-            or join a room
-          </span>
-          <div className="flex-1 h-px bg-border" />
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-px bg-border-subtle" />
+          <span className="text-xs text-text-subtle">or join a room</span>
+          <div className="flex-1 h-px bg-border-subtle" />
         </div>
 
         {/* Join Game */}
@@ -81,8 +79,7 @@ export default function Home() {
             onKeyDown={(e) => e.key === "Enter" && handleJoin()}
             placeholder="ROOM CODE"
             maxLength={6}
-            error={!!error}
-            className="text-center tracking-[0.4em]"
+            className="text-center tracking-[0.3em] uppercase"
           />
           <Button
             variant="secondary"
@@ -90,27 +87,26 @@ export default function Home() {
             disabled={joinCode.trim().length !== 6}
             className="gap-2 min-w-[100px]"
           >
-            <LogIn size={16} />
+            <LogIn size={18} />
             Join
           </Button>
         </div>
 
         {error && (
-          <p className="text-xs text-red-400/90 text-center uppercase tracking-wider mt-2">
-            {error}
-          </p>
+          <p className="text-xs text-ghost-light text-center mt-2">{error}</p>
         )}
 
-        <p className="text-[10px] text-surface-hover text-center mt-8 uppercase tracking-widest">
+        {/* Footer info */}
+        <p className="text-xs text-text-subtle text-center mt-10">
           Up to 4 players per room · 4-minute rounds · Voice chat built-in
         </p>
 
-        <div className="text-center mt-4">
+        <div className="text-center mt-3">
           <a
             href="/rules"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-accent-soft hover:text-accent-glow uppercase tracking-[0.2em] transition-colors"
+            className="text-xs text-accent-light hover:text-accent-soft transition-colors"
           >
             How to Play →
           </a>

@@ -9,14 +9,14 @@ import {
 import { getOrCreatePlayerId } from "@/lib/playerId";
 
 const PLAYER_COLORS = [
-  "#6d28d9",
-  "#2563eb",
-  "#059669",
-  "#d97706",
-  "#dc2626",
-  "#db2777",
-  "#7c3aed",
-  "#0891b2",
+  "#7a68c8",
+  "#6a9fe0",
+  "#4ec980",
+  "#d4a840",
+  "#d4504c",
+  "#c45a8a",
+  "#8a78d0",
+  "#4db8c8",
 ];
 
 function pickColor(): string {
@@ -82,11 +82,11 @@ export function Room({ roomId = "ghost-machine-lobby", children }: RoomProps) {
       >
         <ClientSideSuspense
           fallback={
-            <div className="h-screen w-screen flex items-center justify-center bg-surface-deep font-mono">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin shadow-accent-strong" />
-                <span className="text-xs font-bold uppercase tracking-widest text-text-faint animate-pulse">
-                  Connecting to Server
+            <div className="h-screen w-screen flex items-center justify-center bg-surface-deep">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-8 h-8 border-2 border-accent/60 border-t-transparent rounded-full animate-spin" />
+                <span className="text-sm text-text-muted">
+                  Connecting to server...
                 </span>
               </div>
             </div>

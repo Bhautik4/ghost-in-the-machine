@@ -27,14 +27,14 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 
 const PLAYER_COLORS = [
-  "#6d28d9",
-  "#2563eb",
-  "#059669",
-  "#d97706",
-  "#dc2626",
-  "#db2777",
-  "#7c3aed",
-  "#0891b2",
+  "#7a68c8",
+  "#6a9fe0",
+  "#4ec980",
+  "#d4a840",
+  "#d4504c",
+  "#c45a8a",
+  "#8a78d0",
+  "#4db8c8",
 ];
 
 interface LobbyProps {
@@ -170,7 +170,7 @@ export function Lobby({ roomCode }: LobbyProps) {
     [],
   );
 
-  // Start game (assigns ghost, stores tasks, sets status)
+  // Start game
   const startGameInStorage = useMutation(
     ({ storage }) => {
       const players = allJoinedPlayers;
@@ -187,7 +187,6 @@ export function Lobby({ roomCode }: LobbyProps) {
     setIsGenerating(true);
 
     try {
-      // Generate scenario via LLM
       const res = await fetch("/api/generate-scenario", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -205,10 +204,8 @@ export function Lobby({ roomCode }: LobbyProps) {
         "[Lobby] Scenario generation failed, using static scenario:",
         err,
       );
-      // generatedScenario stays null → components fall back to static
     }
 
-    // Start the game regardless of generation result
     startGameInStorage();
     setIsGenerating(false);
   };
@@ -226,13 +223,13 @@ export function Lobby({ roomCode }: LobbyProps) {
   // Room full screen
   if (isRoomFull && !hasJoined) {
     return (
-      <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
-        <div className="text-center">
-          <UserX size={48} className="text-red-500/80 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-text-primary mb-3 uppercase tracking-widest">
+      <div className="h-screen w-screen bg-surface-deep flex items-center justify-center">
+        <div className="text-center max-w-sm mx-4">
+          <UserX size={40} className="text-ghost mx-auto mb-5" />
+          <h2 className="text-xl font-bold text-text-primary mb-2">
             Room Full
           </h2>
-          <p className="text-sm text-text-subtle mb-8 uppercase tracking-wider">
+          <p className="text-sm text-text-muted mb-8">
             This room already has {MAX_PLAYERS} players.
           </p>
           <a href="/">
@@ -243,28 +240,28 @@ export function Lobby({ roomCode }: LobbyProps) {
     );
   }
 
-  // Pre-join
+  // Pre-join screen
   if (!hasJoined) {
     return (
-      <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
+      <div className="h-screen w-screen bg-surface-deep flex items-center justify-center">
         <div className="w-full max-w-md mx-4">
+          {/* Header */}
           <div className="text-center mb-10 flex flex-col items-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6">
-              <Ghost size={32} className="text-accent-soft" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg border border-accent/40 bg-accent/5 mb-6">
+              <Ghost size={30} className="text-accent-soft" />
             </div>
-            <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
+            <h1 className="text-3xl font-bold text-text-primary tracking-wide">
               Ghost in the Machine
             </h1>
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-[10px] text-text-subtle uppercase tracking-widest">
-                Room
-              </span>
-              <span className="text-sm text-accent-soft tracking-[0.3em] uppercase bg-accent/10 px-3 py-1 border border-accent/30">
+            <div className="mt-3 flex items-center gap-2">
+              <span className="text-xs text-text-subtle">Room</span>
+              <span className="text-sm text-accent-light tracking-[0.3em] uppercase bg-accent/8 px-3 py-1 rounded-lg border border-accent/20">
                 {roomCode}
               </span>
             </div>
           </div>
 
+          {/* Name input + join */}
           <div className="flex gap-3 mb-6">
             <Input
               value={playerName}
@@ -272,7 +269,6 @@ export function Lobby({ roomCode }: LobbyProps) {
               onKeyDown={(e) => e.key === "Enter" && handleJoin()}
               placeholder="Enter your name..."
               disabled={isJoining}
-              className="tracking-wider"
             />
             <Button
               variant="primary"
@@ -281,35 +277,33 @@ export function Lobby({ roomCode }: LobbyProps) {
               className="gap-2 min-w-[100px]"
             >
               {isJoining ? (
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={18} className="animate-spin" />
               ) : (
                 "Join"
               )}
             </Button>
           </div>
 
+          {/* Others already in room */}
           {joinedOthers.length > 0 && (
             <Card>
-              <CardHeader className="flex flex-row items-center gap-2 border-border bg-surface/50">
-                <Users size={14} className="text-accent-soft" />
-                <span className="text-xs font-medium text-text-muted uppercase tracking-widest">
+              <CardHeader className="flex flex-row items-center gap-2">
+                <Users size={16} className="text-accent-soft" />
+                <span className="text-sm text-text-muted">
                   In Room ({joinedOthers.length}/{MAX_PLAYERS})
                 </span>
               </CardHeader>
-              <CardContent className="space-y-2 pt-4">
+              <CardContent className="space-y-2">
                 {joinedOthers.map((o) => (
                   <div
                     key={o.connectionId}
-                    className="flex items-center gap-3 px-4 py-3 border border-border/50 bg-surface"
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-border-subtle bg-surface"
                   >
                     <div
-                      className="w-2.5 h-2.5 rounded-sm cursor-glow"
-                      style={{
-                        backgroundColor: o.presence.color,
-                        color: o.presence.color,
-                      }}
+                      className="w-2.5 h-2.5 rounded-full"
+                      style={{ backgroundColor: o.presence.color }}
                     />
-                    <span className="text-sm text-text-secondary uppercase tracking-wider">
+                    <span className="text-sm text-text-secondary">
                       {o.presence.name}
                     </span>
                   </div>
@@ -324,79 +318,76 @@ export function Lobby({ roomCode }: LobbyProps) {
 
   // Post-join lobby
   return (
-    <div className="h-screen w-screen bg-surface-deep flex items-center justify-center font-mono">
+    <div className="h-screen w-screen bg-surface-deep flex items-center justify-center">
       <div className="w-full max-w-md mx-4">
+        {/* Header */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 border border-accent mb-6">
-            <Ghost size={32} className="text-accent-soft" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg border border-accent/40 bg-accent/5 mb-6">
+            <Ghost size={30} className="text-accent-soft" />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary tracking-[0.1em] uppercase shadow-black drop-shadow-md">
+          <h1 className="text-2xl font-bold text-text-primary tracking-wide">
             Ghost in the Machine
           </h1>
-          {/* Room code + copy link */}
-          <div className="mt-4 flex items-center gap-3">
+          {/* Room code + copy */}
+          <div className="mt-3 flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-text-subtle uppercase tracking-widest">
-                Room
-              </span>
-              <span className="text-sm text-accent-soft tracking-[0.3em] uppercase bg-accent/10 px-3 py-1 border border-accent/30">
+              <span className="text-xs text-text-subtle">Room</span>
+              <span className="text-sm text-accent-light tracking-[0.3em] uppercase bg-accent/8 px-3 py-1 rounded-lg border border-accent/20">
                 {roomCode}
               </span>
             </div>
             <button
               onClick={copyInviteLink}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-[10px] text-text-muted hover:text-text-primary hover:border-surface-hover transition-colors uppercase tracking-widest"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-muted hover:text-text-primary hover:border-surface-hover transition-colors"
             >
               {copied ? (
-                <CheckCheck size={12} className="text-green-500" />
+                <CheckCheck size={14} className="text-success" />
               ) : (
-                <Copy size={12} />
+                <Copy size={14} />
               )}
-              {copied ? "Copied!" : "Invite Link"}
+              {copied ? "Copied!" : "Invite"}
             </button>
           </div>
         </div>
 
         {/* Player list */}
         <Card className="mb-6">
-          <CardHeader className="flex flex-row items-center gap-2 border-border bg-surface/50">
-            <Users size={14} className="text-accent-soft" />
-            <span className="text-xs font-medium text-text-muted uppercase tracking-widest">
+          <CardHeader className="flex flex-row items-center gap-2">
+            <Users size={16} className="text-accent-soft" />
+            <span className="text-sm text-text-muted">
               Players ({joinedCount}/{MAX_PLAYERS})
             </span>
           </CardHeader>
-          <CardContent className="space-y-2 pt-4 max-h-56 overflow-y-auto">
+          <CardContent className="space-y-2 max-h-56 overflow-y-auto">
             {allJoinedPlayers.map((player) => (
               <div
                 key={player.connectionId}
-                className="flex items-center gap-3 px-4 py-3 border border-border/50 bg-surface"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-border-subtle bg-surface"
               >
                 <div
-                  className="w-2.5 h-2.5 rounded-sm cursor-glow"
-                  style={{ backgroundColor: player.color, color: player.color }}
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ backgroundColor: player.color }}
                 />
-                <span className="text-sm text-text-secondary flex-1 uppercase tracking-wider">
+                <span className="text-sm text-text-secondary flex-1">
                   {player.name}
                   {player.isSelf && (
-                    <span className="text-[10px] text-text-faint ml-2 tracking-widest">
-                      (you)
-                    </span>
+                    <span className="text-xs text-text-faint ml-2">(you)</span>
                   )}
                 </span>
                 {player.playerId === hostPlayerId && (
-                  <Crown size={12} className="text-warning shrink-0" />
+                  <Crown size={14} className="text-warning shrink-0" />
                 )}
                 {player.isReady ? (
-                  <Check size={14} className="text-green-500 shrink-0" />
+                  <Check size={16} className="text-success shrink-0" />
                 ) : (
-                  <span className="text-[10px] text-text-faint shrink-0 tracking-widest uppercase">
+                  <span className="text-xs text-text-faint shrink-0">
                     waiting
                   </span>
                 )}
               </div>
             ))}
             {joinedCount < 2 && (
-              <p className="text-xs text-text-faint text-center py-4 uppercase tracking-widest border border-dashed border-border mt-2">
+              <p className="text-xs text-text-faint text-center py-4 border border-dashed border-border rounded-lg mt-2">
                 Need at least 2 players to start
               </p>
             )}
@@ -408,11 +399,11 @@ export function Lobby({ roomCode }: LobbyProps) {
           <Button
             variant={self?.presence.isReady ? "ghost" : "secondary"}
             onClick={toggleReady}
-            className={`flex-1 gap-2 ${self?.presence.isReady ? "text-green-400 border-green-500/30 hover:bg-green-500/10 hover:text-green-300" : ""}`}
+            className={`flex-1 gap-2 ${self?.presence.isReady ? "text-success border-success/30 hover:bg-success/10" : ""}`}
           >
             <Check
-              size={16}
-              className={self?.presence.isReady ? "text-green-500" : ""}
+              size={18}
+              className={self?.presence.isReady ? "text-success" : ""}
             />
             {self?.presence.isReady ? "Ready!" : "Ready Up"}
           </Button>
@@ -425,12 +416,12 @@ export function Lobby({ roomCode }: LobbyProps) {
             >
               {isGenerating ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 size={18} className="animate-spin" />
                   Generating...
                 </>
               ) : (
                 <>
-                  <Play size={16} />
+                  <Play size={18} />
                   Start Game
                 </>
               )}
@@ -438,12 +429,13 @@ export function Lobby({ roomCode }: LobbyProps) {
           )}
         </div>
 
+        {/* Host indicator */}
         <div
-          className={`mt-6 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest ${isHost ? "text-warning" : "text-text-faint"}`}
+          className={`mt-6 flex items-center justify-center gap-2 text-xs ${isHost ? "text-warning" : "text-text-faint"}`}
         >
-          <Crown size={10} />
+          <Crown size={14} />
           <span>
-            {isHost ? "You are the Host" : "Waiting for host to start..."}
+            {isHost ? "You are the host" : "Waiting for host to start..."}
           </span>
         </div>
       </div>

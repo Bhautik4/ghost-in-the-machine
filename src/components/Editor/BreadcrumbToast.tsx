@@ -53,7 +53,7 @@ export function BreadcrumbToast() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="absolute bottom-2 left-4 z-40 flex flex-col gap-1.5 max-w-lg pointer-events-none font-mono">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-1.5 max-w-md pointer-events-none">
       {toasts.map((toast) => {
         const age = Date.now() - toast.createdAt;
         const fadeStart = TOAST_DURATION - 1500;
@@ -63,11 +63,11 @@ export function BreadcrumbToast() {
         return (
           <div
             key={toast.id}
-            className="flex items-start gap-2 px-3 py-2 bg-surface-raised/90 backdrop-blur-sm border border-warning/30 rounded-sm shadow-warning transition-opacity"
+            className="flex items-start gap-2 px-4 py-2.5 bg-surface-raised border border-warning/20 rounded-lg transition-opacity animate-fade-in"
             style={{ opacity }}
           >
-            <AlertTriangle size={12} className="text-warning shrink-0 mt-0.5" />
-            <span className="text-[11px] text-warning-light tracking-wider leading-relaxed">
+            <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
+            <span className="text-sm text-text-secondary leading-relaxed">
               {toast.message}
             </span>
           </div>

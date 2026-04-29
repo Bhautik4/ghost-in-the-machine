@@ -227,7 +227,7 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
       key: "glitch",
       icon: Monitor,
       label: "Glitch",
-      desc: "3s screen distortion for engineers",
+      desc: "3s screen distortion",
       abilityFn: triggerGlitch,
     },
     {
@@ -240,40 +240,36 @@ export function GhostControls({ isGhost, roomCode }: GhostControlsProps) {
   ];
 
   return (
-    <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 font-mono">
-      <div className="bg-surface-raised/95 backdrop-blur-xl border border-ghost/50 rounded-sm p-4 shadow-ghost">
-        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/30 pb-2">
-          <Skull size={14} className="text-ghost animate-pulse" />
-          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em]">
-            Ghost Control Protocol
-          </span>
-        </div>
-        <div className="flex gap-2">
-          {abilities.map(({ key, icon: Icon, label, desc, abilityFn }) => (
-            <button
-              key={key}
-              onClick={() => {
-                abilityFn();
-                sendBreadcrumb(key);
-              }}
-              disabled={cooldowns[key]}
-              title={desc}
-              className={`flex flex-col items-center justify-center gap-1.5 w-24 h-20 rounded-sm text-[10px] uppercase font-bold tracking-widest transition-all ${
-                cooldowns[key]
-                  ? "bg-surface/50 text-text-faint border border-border/50 cursor-not-allowed"
-                  : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60 hover:shadow-ghost-strong"
-              }`}
-            >
-              <Icon size={18} />
-              <span className="text-center px-1 leading-tight">{label}</span>
-              {cooldowns[key] && (
-                <span className="text-[9px] text-ghost/50 mt-1 tabular-nums">
-                  {cooldownRemaining[key] || 0}s
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+    <div className="border-t border-border px-2 py-2 shrink-0">
+      <div className="flex items-center gap-2 px-1 mb-1">
+        <Skull size={14} className="text-ghost" />
+        <span className="text-xs text-ghost font-medium">Ghost Abilities</span>
+      </div>
+      <div className="space-y-0.5">
+        {abilities.map(({ key, icon: Icon, label, desc, abilityFn }) => (
+          <button
+            key={key}
+            onClick={() => {
+              abilityFn();
+              sendBreadcrumb(key);
+            }}
+            disabled={cooldowns[key]}
+            title={desc}
+            className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-[11px] transition-colors ${
+              cooldowns[key]
+                ? "text-text-faint cursor-not-allowed"
+                : "text-ghost-light hover:bg-surface-raised"
+            }`}
+          >
+            <Icon size={14} className="shrink-0" />
+            <span>{label}</span>
+            {cooldowns[key] && (
+              <span className="ml-auto text-[10px] text-text-faint tabular-nums">
+                {cooldownRemaining[key] || 0}s
+              </span>
+            )}
+          </button>
+        ))}
       </div>
     </div>
   );

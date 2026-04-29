@@ -9,9 +9,9 @@ export function Input({ className = "", error, ...props }: InputProps) {
     <input
       className={`w-full bg-surface-raised/50 border ${
         error
-          ? "border-red-500/50 focus:border-red-500"
+          ? "border-ghost/40 focus:border-ghost"
           : "border-surface-hover focus:border-accent-light"
-      } px-4 py-2.5 text-sm text-text-primary outline-none transition-all duration-200 placeholder:text-text-faint uppercase tracking-widest focus:bg-surface-raised rounded-sm ${className}`}
+      } px-4 py-3 text-base text-text-primary outline-none transition-all duration-200 placeholder:text-text-faint focus:bg-surface-raised rounded-lg ${className}`}
       {...props}
     />
   );

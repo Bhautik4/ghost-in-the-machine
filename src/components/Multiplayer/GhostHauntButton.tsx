@@ -187,48 +187,44 @@ export function GhostHauntButton({ isGhost }: GhostHauntButtonProps) {
   if (!isGhost) return null;
 
   return (
-    <div className="font-mono">
-      <div className="bg-surface-raised/95 backdrop-blur-xl border border-ghost/50 rounded-sm p-4 shadow-ghost max-w-[200px]">
-        <div className="flex items-center gap-2 mb-3 px-1 border-b border-ghost/30 pb-2">
-          <Ghost size={14} className="text-ghost animate-pulse" />
-          <span className="text-[11px] font-black text-ghost uppercase tracking-[0.25em]">
-            Haunt Voice
-          </span>
-        </div>
-
-        <button
-          onClick={toggleRecording}
-          disabled={isProcessing}
-          className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm text-xs font-bold uppercase tracking-widest transition-all ${
-            isRecording
-              ? "bg-ghost/20 text-ghost border border-ghost/60 shadow-ghost-strong"
-              : isProcessing
-                ? "bg-surface/50 text-text-faint cursor-wait border border-border/50"
-                : "bg-ghost/10 text-ghost hover:bg-ghost/20 hover:text-white border border-ghost/30 hover:border-ghost/60"
-          }`}
-        >
-          {isRecording ? (
-            <>
-              <Radio size={16} className="animate-pulse" />
-              Click to Stop
-            </>
-          ) : isProcessing ? (
-            <>
-              <div className="w-4 h-4 border-2 border-ghost/40 border-t-transparent rounded-full animate-spin" />
-              Distorting
-            </>
-          ) : (
-            <>
-              <Ghost size={16} />
-              Click to Speak
-            </>
-          )}
-        </button>
-
-        <p className="text-[9px] text-ghost/50 text-center mt-3 font-medium uppercase tracking-wider leading-tight">
-          Your voice will be distorted and played for all engineers
-        </p>
+    <div className="px-3 py-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Ghost size={14} className="text-ghost" />
+        <span className="text-xs text-ghost font-medium">Haunt Voice</span>
       </div>
+
+      <button
+        onClick={toggleRecording}
+        disabled={isProcessing}
+        className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium transition-colors ${
+          isRecording
+            ? "bg-ghost/15 text-ghost-light border border-ghost/30"
+            : isProcessing
+              ? "bg-surface-raised text-text-faint cursor-wait border border-border"
+              : "bg-ghost/10 text-ghost-light hover:bg-ghost/15 border border-ghost/20"
+        }`}
+      >
+        {isRecording ? (
+          <>
+            <Radio size={16} className="animate-pulse" />
+            Stop Recording
+          </>
+        ) : isProcessing ? (
+          <>
+            <div className="w-4 h-4 border-2 border-ghost/40 border-t-transparent rounded-full animate-spin" />
+            Distorting...
+          </>
+        ) : (
+          <>
+            <Ghost size={16} />
+            Click to Speak
+          </>
+        )}
+      </button>
+
+      <p className="text-[10px] text-text-faint text-center mt-2 leading-tight">
+        Your voice will be distorted and played for all engineers
+      </p>
     </div>
   );
 }

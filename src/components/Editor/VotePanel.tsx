@@ -144,7 +144,7 @@ export function VotePanel({ isGhost }: VotePanelProps) {
     const hasVoted = myId ? myId in votes : false;
 
     return (
-      <div className="fixed inset-0 z-[100] bg-surface-deep/95 backdrop-blur-md flex items-center justify-center font-mono">
+      <div className="fixed inset-0 z-[100] bg-surface-deep/95 backdrop-blur-md flex items-center justify-center">
         <div className="bg-surface border border-warning/50 shadow-warning rounded-sm p-6 max-w-sm w-full mx-4">
           <div className="flex items-center gap-2 mb-4 pb-2 border-b border-warning/20">
             <Gavel size={20} className="text-warning" />
@@ -190,18 +190,16 @@ export function VotePanel({ isGhost }: VotePanelProps) {
 
   // Accuse button (engineers only, or ghost pretending)
   return (
-    <div className="font-mono relative w-full">
+    <div className="relative w-full">
       {showAccuseList ? (
-        <div className="absolute top-full right-0 mt-2 bg-surface-raised border border-border rounded-sm p-2 shadow-2xl w-48 z-50">
+        <div className="absolute top-full right-0 mt-2 bg-surface-raised border border-border rounded-lg p-2 w-full z-50">
           <div className="flex items-center justify-between mb-2 px-1 border-b border-border pb-2">
-            <span className="text-[10px] font-bold text-text-subtle uppercase tracking-widest">
-              Accuse Player
-            </span>
+            <span className="text-xs text-text-muted">Accuse Player</span>
             <button
               onClick={() => setShowAccuseList(false)}
               className="text-text-faint hover:text-ghost transition-colors"
             >
-              <X size={12} />
+              <X size={14} />
             </button>
           </div>
           {allPlayers
@@ -215,7 +213,7 @@ export function VotePanel({ isGhost }: VotePanelProps) {
                   setVoteCooldown(true);
                   setTimeout(() => setVoteCooldown(false), 60000);
                 }}
-                className="w-full text-left px-3 py-2 text-xs font-bold text-text-muted hover:bg-border/50 hover:text-text-primary uppercase tracking-wider transition-colors"
+                className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-surface-hover hover:text-text-primary rounded transition-colors"
               >
                 {p.name}
               </button>
@@ -225,10 +223,10 @@ export function VotePanel({ isGhost }: VotePanelProps) {
         <button
           onClick={() => setShowAccuseList(true)}
           disabled={voteCooldown}
-          className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest transition-all ${
+          className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
             voteCooldown
-              ? "bg-surface/50 text-text-faint cursor-not-allowed border border-border"
-              : "bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 hover:border-warning/60 shadow-warning"
+              ? "bg-surface-raised text-text-faint cursor-not-allowed border border-border"
+              : "bg-warning/10 text-warning border border-warning/25 hover:bg-warning/15"
           }`}
         >
           <AlertTriangle size={14} />

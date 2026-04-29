@@ -17,58 +17,67 @@ import { useEventListener } from "@liveblocks/react/suspense";
 const ghostTheme = EditorView.theme({
   "&": {
     backgroundColor: "transparent",
-    color: "#e4e4e7",
-    fontSize: "14px",
-    fontFamily: "'JetBrains Mono', 'Fira Code', ui-monospace, monospace",
+    color: "#d4d4d4",
+    fontSize: "15px",
+    fontFamily:
+      "var(--font-mono), 'JetBrains Mono', 'Fira Code', ui-monospace, monospace",
     height: "100%",
   },
   ".cm-scroller": { overflow: "auto" },
   ".cm-content": {
-    caretColor: "#a78bfa",
+    caretColor: "#569cd6",
     padding: "16px 0",
-    lineHeight: "24px",
+    lineHeight: "30px",
   },
   ".cm-line": { padding: "0 20px" },
   ".cm-gutters": {
-    backgroundColor: "#0c0c0f",
-    color: "#52525b",
+    backgroundColor: "#181818",
+    color: "#858585",
     border: "none",
-    borderRight: "1px solid #3a3a42",
+    borderRight: "1px solid #3c3c3c",
     minWidth: "48px",
   },
-  ".cm-activeLineGutter": { backgroundColor: "transparent", color: "#a1a1aa" },
-  ".cm-activeLine": { backgroundColor: "rgba(109, 40, 217, 0.05)" },
+  ".cm-activeLineGutter": { backgroundColor: "transparent", color: "#c6c6c6" },
+  ".cm-activeLine": { backgroundColor: "rgba(255, 255, 255, 0.04)" },
   "&.cm-focused .cm-cursor": {
-    borderLeftColor: "#a78bfa",
+    borderLeftColor: "#d4d4d4",
     borderLeftWidth: "2px",
   },
   "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
-    backgroundColor: "rgba(109, 40, 217, 0.4) !important",
+    backgroundColor: "rgba(38, 79, 120, 0.6) !important",
   },
 });
 
 const ghostHighlight = HighlightStyle.define([
-  { tag: tags.keyword, color: "#c084fc" },
-  { tag: tags.controlKeyword, color: "#c084fc" },
-  { tag: tags.definitionKeyword, color: "#c084fc" },
-  { tag: tags.moduleKeyword, color: "#c084fc" },
-  { tag: tags.operatorKeyword, color: "#c084fc" },
-  { tag: tags.string, color: "#86efac" },
-  { tag: tags.number, color: "#fde047" },
-  { tag: tags.bool, color: "#fde047" },
-  { tag: tags.null, color: "#fde047" },
-  { tag: tags.typeName, color: "#22d3ee" },
-  { tag: tags.className, color: "#22d3ee" },
-  { tag: tags.comment, color: "#71717a", fontStyle: "italic" },
-  { tag: tags.variableName, color: "#e4e4e7" },
-  { tag: tags.function(tags.variableName), color: "#e4e4e7" },
-  { tag: tags.propertyName, color: "#e4e4e7" },
-  { tag: tags.operator, color: "#52525b" },
-  { tag: tags.punctuation, color: "#52525b" },
-  { tag: tags.bracket, color: "#52525b" },
-  { tag: tags.tagName, color: "#22d3ee" },
-  { tag: tags.attributeName, color: "#c084fc" },
-  { tag: tags.attributeValue, color: "#86efac" },
+  // Keywords — VS Code Dark+ purple/blue
+  { tag: tags.keyword, color: "#c586c0" },
+  { tag: tags.controlKeyword, color: "#c586c0" },
+  { tag: tags.definitionKeyword, color: "#569cd6" },
+  { tag: tags.moduleKeyword, color: "#c586c0" },
+  { tag: tags.operatorKeyword, color: "#569cd6" },
+  // Strings — VS Code Dark+ orange
+  { tag: tags.string, color: "#ce9178" },
+  // Numbers/booleans/null — VS Code Dark+ light green
+  { tag: tags.number, color: "#b5cea8" },
+  { tag: tags.bool, color: "#569cd6" },
+  { tag: tags.null, color: "#569cd6" },
+  // Types/classes — VS Code Dark+ teal
+  { tag: tags.typeName, color: "#4ec9b0" },
+  { tag: tags.className, color: "#4ec9b0" },
+  // Comments — VS Code Dark+ green
+  { tag: tags.comment, color: "#6a9955", fontStyle: "italic" },
+  // Variables/properties — VS Code Dark+ light blue
+  { tag: tags.variableName, color: "#9cdcfe" },
+  { tag: tags.function(tags.variableName), color: "#dcdcaa" },
+  { tag: tags.propertyName, color: "#9cdcfe" },
+  // Operators/punctuation
+  { tag: tags.operator, color: "#d4d4d4" },
+  { tag: tags.punctuation, color: "#d4d4d4" },
+  { tag: tags.bracket, color: "#d4d4d4" },
+  // JSX/HTML
+  { tag: tags.tagName, color: "#569cd6" },
+  { tag: tags.attributeName, color: "#9cdcfe" },
+  { tag: tags.attributeValue, color: "#ce9178" },
 ]);
 
 interface RemoteCursor {
@@ -282,7 +291,7 @@ export function CMEditor({
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 min-h-full overflow-hidden"
+      className="relative h-full overflow-hidden"
       data-gramm="false"
       data-gramm_editor="false"
       data-enable-grammarly="false"
@@ -303,8 +312,8 @@ export function CMEditor({
             style={{ backgroundColor: c.color }}
           />
           <div
-            className="absolute -top-5 left-0 px-1.5 py-0.5 rounded-sm text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
-            style={{ backgroundColor: c.color, color: "#fff" }}
+            className="absolute -top-5 left-0 px-1.5 py-0.5 rounded text-xs font-semibold whitespace-nowrap"
+            style={{ backgroundColor: c.color, color: "#111111" }}
           >
             {c.name}
           </div>

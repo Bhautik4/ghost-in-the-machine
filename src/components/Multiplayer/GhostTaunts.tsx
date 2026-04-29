@@ -113,86 +113,84 @@ export function GhostTaunts() {
   };
 
   return (
-    <div className="font-mono w-52">
-      <div className="bg-surface-raised/95 backdrop-blur-xl border border-ghost/50 rounded-sm shadow-ghost">
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-ghost/30">
-          <MessageSquare size={12} className="text-ghost" />
-          <span className="text-[10px] font-bold text-ghost uppercase tracking-[0.2em]">
-            Demon Taunts
+    <div className="px-3 py-2">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2">
+        <MessageSquare size={14} className="text-ghost" />
+        <span className="text-xs text-ghost font-medium">Demon Taunts</span>
+        {cooldown && (
+          <span className="ml-auto text-xs text-text-faint tabular-nums">
+            {cooldownRemaining}s
           </span>
-          {cooldown && (
-            <span className="ml-auto text-[9px] text-ghost/50 tabular-nums">
-              {cooldownRemaining}s
-            </span>
-          )}
-        </div>
+        )}
+      </div>
 
-        {/* Custom typed message input */}
-        <div className="px-1.5 pt-1.5">
-          <div className="flex items-center gap-1 bg-surface-deep/80 border border-ghost/20 rounded-sm">
-            <input
-              ref={inputRef}
-              type="text"
-              value={customText}
-              onChange={(e) => setCustomText(e.target.value.slice(0, 100))}
-              onKeyDown={handleKeyDown}
-              disabled={cooldown || loading !== null}
-              placeholder="Type a message..."
-              maxLength={100}
-              className="flex-1 bg-transparent text-[10px] text-ghost/90 placeholder:text-ghost/30 px-2 py-1.5 outline-none tracking-wider font-medium disabled:opacity-40"
-              data-gramm="false"
-              data-gramm_editor="false"
-              data-enable-grammarly="false"
-              spellCheck={false}
-              autoCorrect="off"
-              autoCapitalize="off"
-              data-ms-editor="false"
-            />
-            <button
-              onClick={handleCustomSend}
-              disabled={cooldown || loading !== null || !customText.trim()}
-              className="shrink-0 p-1.5 text-ghost/50 hover:text-ghost disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              title="Send as demon voice"
-            >
-              {loading && loading === customText.trim() ? (
+      {/* Custom typed message input */}
+      <div className="mb-2">
+        <div className="flex items-center gap-1 bg-surface border border-border rounded-lg">
+          <input
+            ref={inputRef}
+            type="text"
+            value={customText}
+            onChange={(e) => setCustomText(e.target.value.slice(0, 100))}
+            onKeyDown={handleKeyDown}
+            disabled={cooldown || loading !== null}
+            placeholder="Type a message..."
+            maxLength={100}
+            className="flex-1 bg-transparent text-xs text-text-secondary placeholder:text-text-faint px-2.5 py-1.5 outline-none disabled:opacity-40"
+            data-gramm="false"
+            data-gramm_editor="false"
+            data-enable-grammarly="false"
+            spellCheck={false}
+            autoCorrect="off"
+            autoCapitalize="off"
+            data-ms-editor="false"
+          />
+          <button
+            onClick={handleCustomSend}
+            disabled={cooldown || loading !== null || !customText.trim()}
+            className="shrink-0 p-1.5 text-text-faint hover:text-ghost disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="Send as demon voice"
+          >
+            {loading && loading === customText.trim() ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <Send size={14} />
+            )}
+          </button>
+        </div>
+        <p className="text-[10px] text-text-faint px-1 mt-0.5">
+          {customText.length}/100 · Enter to send
+        </p>
+      </div>
+
+      {/* Preset taunts */}
+      <div className="space-y-0.5 max-h-48 overflow-y-auto">
+        {TAUNTS.map((taunt) => (
+          <button
+            key={taunt}
+            onClick={() => sendTaunt(taunt)}
+            disabled={cooldown || loading !== null}
+            className={`w-full text-left px-2.5 py-1.5 rounded text-xs transition-colors ${
+              loading === taunt
+                ? "bg-ghost/10 text-ghost"
+                : cooldown || loading
+                  ? "text-text-faint cursor-not-allowed"
+                  : "text-text-muted hover:bg-surface-raised hover:text-ghost"
+            }`}
+          >
+            {loading === taunt ? (
+              <span className="flex items-center gap-1.5">
                 <Loader2 size={12} className="animate-spin" />
-              ) : (
-                <Send size={12} />
-              )}
-            </button>
-          </div>
-          <p className="text-[8px] text-ghost/30 px-1 py-0.5 tracking-wider">
-            {customText.length}/100 · Enter to send
-          </p>
-        </div>
-
-        <div className="p-1.5 grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
-          {TAUNTS.map((taunt) => (
-            <button
-              key={taunt}
-              onClick={() => sendTaunt(taunt)}
-              disabled={cooldown || loading !== null}
-              className={`w-full text-left px-2.5 py-1.5 rounded-sm text-[10px] transition-all ${
-                loading === taunt
-                  ? "bg-ghost/20 text-ghost"
-                  : cooldown || loading
-                    ? "text-surface-hover cursor-not-allowed"
-                    : "text-ghost/70 hover:bg-ghost/10 hover:text-ghost"
-              }`}
-            >
-              {loading === taunt ? (
-                <span className="flex items-center gap-1.5">
-                  <Loader2 size={10} className="animate-spin" />
-                  Generating...
-                </span>
-              ) : (
-                <span className="flex items-center gap-1.5">
-                  <Ghost size={10} className="shrink-0 opacity-50" />"{taunt}"
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+                Generating...
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                &ldquo;{taunt}&rdquo;
+              </span>
+            )}
+          </button>
+        ))}
       </div>
     </div>
   );

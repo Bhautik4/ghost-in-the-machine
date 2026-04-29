@@ -13,83 +13,78 @@ summary {
 
 /* ═══════════════════════════════════════════════════════════════
    Ghost in the Machine — Design Tokens
-   All colors defined here, consumed via Tailwind @theme.
-   Usage: bg-surface, text-primary, border-ghost, etc.
+   A refined dark theme: comfortable, not pitch-black.
+   Terminal-inspired with enough contrast for long sessions.
    ═══════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* ── Surfaces ─────────────────────────────────────────────── */
-  --color-surface-deep: #0c0c0f;
-  --color-surface: #1a1a1f;
-  --color-surface-raised: #222228;
-  --color-surface-overlay: #2a2a30;
-  --color-surface-hover: #3f3f46;
+  /* ── Surfaces (VS Code Dark+ inspired layering) ───────────── */
+  --color-surface-deep: #181818;
+  --color-surface: #1e1e1e;
+  --color-surface-raised: #252526;
+  --color-surface-overlay: #2d2d30;
+  --color-surface-hover: #3c3c3c;
 
   /* ── Borders ──────────────────────────────────────────────── */
-  --color-border: #3a3a42;
-  --color-border-subtle: #2a2a30;
+  --color-border: #3c3c3c;
+  --color-border-subtle: #2d2d30;
 
-  /* ── Text ──────────────────────────────────────────────────── */
-  --color-text-primary: #e4e4e7;
-  --color-text-secondary: #d4d4d8;
-  --color-text-muted: #a1a1aa;
-  --color-text-subtle: #71717a;
-  --color-text-faint: #52525b;
-  --color-text-ghost: #3f3f46;
+  /* ── Text (high contrast for readability) ──────────────────── */
+  --color-text-primary: #d4d4d4;
+  --color-text-secondary: #cccccc;
+  --color-text-muted: #9d9d9d;
+  --color-text-subtle: #727272;
+  --color-text-faint: #585858;
+  --color-text-ghost: #404040;
 
-  /* ── Accent (Purple) ──────────────────────────────────────── */
-  --color-accent: #6d28d9;
-  --color-accent-hover: #7c3aed;
-  --color-accent-light: #8b5cf6;
-  --color-accent-soft: #a78bfa;
-  --color-accent-glow: #c084fc;
+  /* ── Accent (Muted Indigo) ────────────────────────────────── */
+  --color-accent: #6e56cf;
+  --color-accent-hover: #7c68d6;
+  --color-accent-light: #9b8ce8;
+  --color-accent-soft: #b8aef0;
+  --color-accent-glow: #d4cff8;
 
-  /* ── Ghost (Red) ──────────────────────────────────────────── */
-  --color-ghost: #ef4444;
-  --color-ghost-dark: #dc2626;
-  --color-ghost-light: #f87171;
+  /* ── Ghost (Muted Red) ────────────────────────────────────── */
+  --color-ghost: #d4504c;
+  --color-ghost-dark: #b83e3a;
+  --color-ghost-light: #e07070;
 
-  /* ── Success (Green) ──────────────────────────────────────── */
-  --color-success: #22c55e;
-  --color-success-light: #86efac;
+  /* ── Success (Muted Green) ────────────────────────────────── */
+  --color-success: #4ec980;
+  --color-success-light: #89d8a8;
 
-  /* ── Warning (Yellow) ─────────────────────────────────────── */
-  --color-warning: #eab308;
-  --color-warning-light: #fde047;
+  /* ── Warning (Muted Amber) ────────────────────────────────── */
+  --color-warning: #d4a840;
+  --color-warning-light: #e0c06a;
 
-  /* ── Info (Cyan/Blue) ─────────────────────────────────────── */
-  --color-info: #06b6d4;
-  --color-info-light: #22d3ee;
-  --color-info-blue: #3b82f6;
-  --color-info-deep: #2563eb;
+  /* ── Info (Muted Teal/Blue) ───────────────────────────────── */
+  --color-info: #4db8c8;
+  --color-info-light: #6ecad8;
+  --color-info-blue: #6a9fe0;
+  --color-info-deep: #5588d0;
 
-  /* ── Syntax Highlighting ──────────────────────────────────── */
-  --color-syntax-keyword: #c084fc;
-  --color-syntax-string: #86efac;
-  --color-syntax-number: #fde047;
-  --color-syntax-type: #22d3ee;
-  --color-syntax-comment: #71717a;
-  --color-syntax-operator: #52525b;
+  /* ── Syntax Highlighting (readable against #1e1e1e) ───────── */
+  --color-syntax-keyword: #c5a5f5;
+  --color-syntax-string: #89d8a8;
+  --color-syntax-number: #e0c06a;
+  --color-syntax-type: #6ecad8;
+  --color-syntax-comment: #727272;
+  --color-syntax-operator: #9d9d9d;
 
-  /* ── Player Colors ────────────────────────────────────────── */
-  --color-player-purple: #6d28d9;
-  --color-player-blue: #2563eb;
-  --color-player-green: #059669;
-  --color-player-orange: #d97706;
-  --color-player-red: #dc2626;
-  --color-player-pink: #db2777;
-  --color-player-violet: #7c3aed;
-  --color-player-cyan: #0891b2;
+  /* ── Player Colors (toned down) ───────────────────────────── */
+  --color-player-purple: #7a68c8;
+  --color-player-blue: #6a9fe0;
+  --color-player-green: #4ec980;
+  --color-player-orange: #d4a840;
+  --color-player-red: #d4504c;
+  --color-player-pink: #c45a8a;
+  --color-player-violet: #8a78d0;
+  --color-player-cyan: #4db8c8;
 
   /* ── File Type Icons ──────────────────────────────────────── */
-  --color-file-tsx: #3b82f6;
-  --color-file-ts: #06b6d4;
-  --color-file-js: #eab308;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+  --color-file-tsx: #6a9fe0;
+  --color-file-ts: #4db8c8;
+  --color-file-js: #d4a840;
 }
 
 html,
@@ -98,26 +93,26 @@ body {
   overflow: hidden;
   background: var(--color-surface);
   color: var(--color-text-secondary);
-  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Custom scrollbar */
+/* ── Custom scrollbar ───────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-overlay);
-  border-radius: 4px;
+  background: var(--color-border-subtle);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-surface-hover);
 }
 
-/* Animations */
+/* ── Animations ─────────────────────────────────────────────── */
 @keyframes glitch {
   0% {
     transform: translate(0);
@@ -152,10 +147,10 @@ body {
 @keyframes paranoia-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    box-shadow: 0 0 0 0 rgba(212, 80, 76, 0);
   }
   50% {
-    box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 15px 3px rgba(212, 80, 76, 0.2);
   }
 }
 
@@ -178,6 +173,28 @@ body {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ── Utility animation classes ──────────────────────────────── */
 .glitch-active {
   animation: glitch 0.3s ease-in-out infinite;
 }
@@ -190,6 +207,12 @@ body {
 .cursor-blink {
   animation: cursor-blink 1s step-end infinite;
 }
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
 
 .scanline-overlay::after {
   content: "";
@@ -198,30 +221,26 @@ body {
   left: 0;
   width: 100%;
   height: 4px;
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(212, 80, 76, 0.06);
   animation: scanline 3s linear infinite;
   pointer-events: none;
   z-index: 9999;
 }
 
+/* ── Selection ──────────────────────────────────────────────── */
 ::selection {
-  background: rgba(109, 40, 217, 0.4);
+  background: rgba(110, 86, 207, 0.3);
   color: var(--color-text-primary);
 }
 
-/* Box shadows — disabled for cleaner look */
+/* ── No shadows / no glow — flat UI ─────────────────────────── */
 .shadow-ghost,
-.shadow-ghost-strong,
-.shadow-success,
-.shadow-warning,
-.shadow-info,
-.border-glow-accent,
-.border-glow-ghost,
-.border-glow-success {
+.shadow-accent,
+.cursor-glow {
   box-shadow: none;
 }
 
-/* Override Tailwind built-in shadows globally */
+/* ── Kill all Tailwind shadows globally ─────────────────────── */
 *,
 *::before,
 *::after {
@@ -230,27 +249,27 @@ body {
   --tw-drop-shadow: drop-shadow(0 0 #0000) !important;
 }
 
-/* Cursor glow */
-.cursor-glow {
-  box-shadow: none;
-}
-
-/* contentEditable code editor lines */
+/* ── Code editor lines ──────────────────────────────────────── */
 .code-line {
-  min-height: 1.5rem; /* matches leading-6 */
+  min-height: 1.5rem;
 }
 
-/* CRT scanline effect for overlays */
+/* ── CRT scanline effect for overlays ───────────────────────── */
 .scanline-crt {
   background:
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%),
     linear-gradient(
       90deg,
-      rgba(255, 0, 0, 0.06),
-      rgba(0, 255, 0, 0.02),
-      rgba(0, 0, 255, 0.06)
+      rgba(255, 0, 0, 0.04),
+      rgba(0, 255, 0, 0.015),
+      rgba(0, 0, 255, 0.04)
     );
   background-size:
     100% 4px,
     3px 100%;
+}
+
+/* ── Hide Liveblocks badge ──────────────────────────────────── */
+#liveblocks-badge {
+  display: none;
 }

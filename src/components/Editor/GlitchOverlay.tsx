@@ -57,8 +57,8 @@ export function GlitchOverlay({ isGhost }: GlitchOverlayProps) {
   if (isGhost) {
     return (
       <div className="fixed inset-0 z-50 pointer-events-none">
-        <div className="absolute top-4 right-4 px-3 py-1.5 bg-ghost/20 border border-ghost/40 rounded-sm">
-          <span className="text-[10px] font-bold text-ghost uppercase tracking-widest animate-pulse">
+        <div className="absolute top-4 right-4 px-3 py-1.5 bg-ghost/10 border border-ghost/30 rounded-lg">
+          <span className="text-base text-ghost animate-pulse">
             Glitch Active
           </span>
         </div>
@@ -97,7 +97,7 @@ export function GlitchOverlay({ isGhost }: GlitchOverlayProps) {
       <div
         className="absolute w-full h-1"
         style={{
-          background: "rgba(239, 68, 68, 0.3)",
+          background: "rgba(212, 80, 76, 0.25)",
           animation: "scanline 0.4s linear infinite",
         }}
       />
@@ -121,10 +121,13 @@ export function GlitchOverlay({ isGhost }: GlitchOverlayProps) {
       {/* Distorted warning text */}
       <div className="absolute inset-0 flex items-center justify-center">
         <p
-          className="text-ghost/40 text-sm font-black uppercase tracking-[0.4em] glitch-active"
-          style={{ textShadow: "2px 0 #ff0000, -2px 0 #00ffff" }}
+          className="text-ghost/30 text-lg font-bold glitch-active"
+          style={{
+            textShadow:
+              "2px 0 rgba(212,80,76,0.5), -2px 0 rgba(77,184,200,0.5)",
+          }}
         >
-          [SIGNAL CORRUPTED]
+          Signal Corrupted
         </p>
       </div>
     </div>

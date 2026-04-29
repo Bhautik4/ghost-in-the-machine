@@ -2,8 +2,8 @@
 
 import { useGameStore } from "@/store/gameStore";
 import { useMutation } from "@liveblocks/react/suspense";
-import { useEffect, useRef } from "react";
-import { Clock, Shield, AlertTriangle, Ghost } from "lucide-react";
+import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
 import { VotePanel } from "@/components/Editor/VotePanel";
 
 interface GameHUDProps {
@@ -11,9 +11,7 @@ interface GameHUDProps {
 }
 
 export function GameHUD({ isGhost }: GameHUDProps) {
-  const { phase, timeRemaining, paranoiaMeter, tasks, tick } = useGameStore();
-
-  const fixedCount = tasks.filter((t) => t.isFixed).length;
+  const { phase, paranoiaMeter, tick } = useGameStore();
 
   // Sync ghost-wins to Liveblocks when timer or paranoia triggers it
   const setGhostWins = useMutation(({ storage }) => {
@@ -23,98 +21,48 @@ export function GameHUD({ isGhost }: GameHUDProps) {
     }
   }, []);
 
-  // Game timer
+  // Game timer — tick every second
   useEffect(() => {
     if (phase !== "playing") return;
     const interval = setInterval(() => {
       tick();
       const state = useGameStore.getState();
-      // If timer just hit 0 or paranoia hit 100, sync to Liveblocks
-      if (state.phase === "ghost-wins" || state.phase === "engineers-win") {
-        if (state.phase === "ghost-wins") setGhostWins();
+      if (state.phase === "ghost-wins") {
+        setGhostWins();
       }
     }, 1000);
     return () => clearInterval(interval);
   }, [phase, tick, setGhostWins]);
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
-
   if (phase !== "playing") return null;
 
-  const isUrgent = timeRemaining <= 30;
-  const isCritical = timeRemaining <= 10;
-
   return (
-    <div className="flex flex-col gap-3 font-mono">
-      {/* Timer — dramatic at low time */}
-      <div
-        className={`flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-bold tracking-widest backdrop-blur-md shadow-xl w-fit ml-auto ${
-          isCritical
-            ? "bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse"
-            : isUrgent
-              ? "bg-red-500/10 text-red-400 border border-red-500/30"
-              : timeRemaining < 60
-                ? "bg-warning/10 text-warning-light border border-warning/30"
-                : "bg-surface-raised/80 text-text-primary border border-border"
-        }`}
-      >
-        <Clock size={16} className={isCritical ? "animate-spin" : ""} />
-        <span className={isCritical ? "text-xl font-black" : ""}>
-          {formatTime(timeRemaining)}
-        </span>
-      </div>
-
-      {/* Role badge */}
-      <div
-        className={`flex items-center gap-2 px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-md border shadow-lg ${
-          isGhost
-            ? "bg-red-500/10 text-red-400 border-red-500/30"
-            : "bg-accent/10 text-accent-glow border-accent/30"
-        }`}
-      >
-        {isGhost ? <Ghost size={14} /> : <Shield size={14} />}
-        <span>{isGhost ? "Ghost" : "Engineer"}</span>
-      </div>
-
-      {/* Task progress */}
-      <div className="bg-surface-raised/80 backdrop-blur-md border border-border rounded-sm px-4 py-3 shadow-lg">
-        <div className="text-[10px] font-bold text-text-muted mb-2 uppercase tracking-widest">
-          Bugs Fixed: {fixedCount}/{tasks.length}
-        </div>
-        <div className="w-32 h-1.5 bg-surface rounded-sm overflow-hidden shadow-inner">
-          <div
-            className="h-full bg-success rounded-sm transition-all duration-500 shadow-success"
-            style={{ width: `${(fixedCount / tasks.length) * 100}%` }}
-          />
-        </div>
-      </div>
-
+    <div className="flex flex-col gap-3">
       {/* Paranoia meter */}
       <div
-        className={`bg-surface-raised/80 backdrop-blur-md border rounded-sm px-4 py-3 shadow-lg transition-colors ${
+        className={`bg-surface-raised border rounded-lg px-4 py-3 transition-colors ${
           paranoiaMeter > 70
-            ? "border-red-500/50 shadow-ghost-strong paranoia-border"
+            ? "border-ghost/40 paranoia-border"
             : "border-border"
         }`}
       >
-        <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted mb-2 uppercase tracking-widest">
+        <div className="flex items-center gap-1.5 text-xs text-text-muted mb-2">
           <AlertTriangle
-            size={12}
-            className={paranoiaMeter > 70 ? "text-red-500 animate-pulse" : ""}
+            size={14}
+            className={paranoiaMeter > 70 ? "text-ghost animate-pulse" : ""}
           />
           Paranoia
+          <span className="ml-auto text-text-subtle">
+            {Math.round(paranoiaMeter)}%
+          </span>
         </div>
-        <div className="w-32 h-1.5 bg-surface rounded-sm overflow-hidden shadow-inner relative">
+        <div className="w-full h-1.5 bg-surface rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-sm transition-all duration-500 relative ${
+            className={`h-full rounded-full transition-all duration-500 ${
               paranoiaMeter > 70
-                ? "bg-ghost shadow-ghost-strong"
+                ? "bg-ghost"
                 : paranoiaMeter > 40
-                  ? "bg-warning shadow-warning"
+                  ? "bg-warning"
                   : "bg-accent-soft"
             }`}
             style={{ width: `${paranoiaMeter}%` }}
@@ -122,7 +70,7 @@ export function GameHUD({ isGhost }: GameHUDProps) {
         </div>
       </div>
 
-      {/* Accuse / Call Vote Button */}
+      {/* Vote button */}
       <VotePanel isGhost={isGhost} />
     </div>
   );
