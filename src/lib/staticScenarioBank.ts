@@ -2083,11 +2083,13 @@ const SCENARIOS: Scenario[] = [
  * Uses the sum of all character codes modulo the number of scenarios.
  */
 export function getStaticScenario(roomCode: string): Scenario {
-  let sum = 0;
-  for (let i = 0; i < roomCode.length; i++) {
-    sum += roomCode.charCodeAt(i);
-  }
-  return SCENARIOS[sum % SCENARIOS.length];
+  // let sum = 0;
+  // for (let i = 0; i < roomCode.length; i++) {
+  //   sum += roomCode.charCodeAt(i);
+  // }
+  // return SCENARIOS[sum % SCENARIOS.length];
+
+  return SCENARIO_I;
 }
 
 export { SCENARIOS };
