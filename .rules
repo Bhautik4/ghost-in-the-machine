@@ -1,0 +1,97 @@
+# Ghost in the Machine — Zed AI Rules
+
+## Project Overview
+
+Ghost in the Machine is a real-time multiplayer social deduction game for coders. Think "Among Us" inside a code editor. 2–4 players join a room, one is secretly the Ghost, the rest are Engineers. Engineers fix bugs in a broken codebase before time runs out. The Ghost sabotages from the shadows.
+
+Tech stack: Next.js 16 (App Router, React 19), TypeScript, Tailwind CSS v4, Liveblocks (real-time), CodeMirror 6, Zustand, WebRTC voice chat, ElevenLabs (Speech-to-Speech, TTS, Sound Generation), Google Gemini (AI scenarios), Supabase.
+
+## Architecture Rules
+
+- All real-time state flows through Liveblocks (presence, storage, broadcast events). Never use local state for data that must sync across players.
+- API routes in `src/app/api/` are server-side proxies for external APIs (ElevenLabs, Gemini, Liveblocks). Never expose API keys to the client.
+- Game state machine: waiting → active → ghost-wins | engineers-win. Transitions happen via Liveblocks Storage mutations.
+- Audio has a two-tier system: ElevenLabs AI generation (primary) with Web Audio API procedural fallback. Always implement both tiers.
+
+## UI/UX Design Rules
+
+### No Shadows, No Glow
+- Never add `box-shadow`, `drop-shadow`, or any glow effect. All Tailwind shadows are globally killed in `globals.css`.
+- The UI is flat. Depth comes from surface color layering and borders only.
+
+### Design Tokens (mandatory)
+Always use tokens from `globals.css` — never hardcode hex values in components:
+- `surface-*` — backgrounds (deep → hover = dark → light)
+- `border` / `border-subtle` — all borders
+- `text-*` — all text (primary → ghost = bright → dim)
+- `accent-*` — interactive elements, focus states
+- `ghost-*` — ghost role UI, danger states
+- `success-*` — verified/fixed/positive states
+- `warning-*` — alerts, time pressure
+- `info-*` — informational, file icons
+- `syntax-*` — code editor syntax highlighting
+- `player-*` — player cursors, name badges
+
+Do NOT use raw Tailwind colors (e.g., `red-500`, `blue-600`). Do NOT use `bg-black` or `bg-white`.
+
+### Typography
+- UI font: Inter (sans-serif) via `font-sans` — all buttons, labels, headings, sidebar, HUD, overlays.
+- Code font: JetBrains Mono (monospace) via `font-mono` — only inside CodeMirror editor and cursor labels over code.
+- Do NOT apply `uppercase` by default on buttons, inputs, or body text.
+- Minimum readable text size: `text-xs` (12px). Never use `text-[10px]`.
+
+### Border Radius
+- All interactive elements use `rounded-lg` (8px).
+- Exceptions: avatar circles, progress bars, specific game overlays.
+
+### Components
+- UI primitives live in `src/components/ui/` (Button, Card, Input). Use them everywhere.
+- Button variants: `primary`, `secondary`, `danger`, `ghost`.
+- Card structure: `Card` > `CardHeader` > `CardContent` > `CardFooter`.
+- Icons: Lucide React only. Sizes: `size={16}` small, `size={20}` default, `size={24}` large.
+
+### Animations
+Use predefined classes from `globals.css`:
+- `.glitch-active` — glitch shake
+- `.flicker-active` — opacity flicker
+- `.paranoia-border` — pulsing red border
+- `.animate-fade-in` — subtle entrance
+- `.animate-pulse-soft` — gentle pulse
+- `.scanline-overlay` — CRT scanline sweep
+Keep transitions at `duration-200`. Do not add new keyframes without updating `globals.css`.
+
+### Interactive States
+- Hover: `hover:bg-surface-hover` or token-appropriate variants
+- Disabled: `disabled:opacity-50 disabled:cursor-not-allowed`
+- Focus: `focus:border-accent-light`. No focus rings with glow/shadow.
+
+## Code Conventions
+
+- React components use named exports, not default exports.
+- Hooks go in `src/lib/` prefixed with `use` (e.g., `useGameScenario.ts`).
+- Types go in `src/types/`. Shared interfaces are in `game.ts` and `scenario.ts`.
+- Liveblocks config is in `liveblocks.config.ts` at the project root.
+- Game store (Zustand) is in `src/store/gameStore.ts` — for local-only state like timers and paranoia.
+- ElevenLabs audio caches are in `src/lib/` (sfxCache.ts, narratorCache.ts, ambientMusic.ts).
+
+## ElevenLabs Integration Points
+
+The game uses 3 ElevenLabs APIs across 7 audio layers:
+1. **Speech-to-Speech** (`/api/voice`) — Ghost demon voice distortion
+2. **Text-to-Speech** (`/api/tts`) — narrator, whispers (whisper mode), ghost taunts
+3. **Sound Generation** (`/api/generate-sfx`) — 8 SFX, 3 ambient music layers
+
+Voice settings change based on game time (Audio Climax feature in `/api/voice`).
+TTS has two modes: whisper (low stability, breathy) and normal (clear, menacing).
+
+## File Structure
+
+```
+src/app/           — Pages and API routes
+src/components/ui/ — Button, Card, Input primitives
+src/components/Editor/    — Game UI (editor, HUD, overlays, effects)
+src/components/Multiplayer/ — Room, voice chat, cursors, ghost voice
+src/lib/           — Utilities, hooks, audio engines, validators
+src/store/         — Zustand game store
+src/types/         — TypeScript interfaces
+```
