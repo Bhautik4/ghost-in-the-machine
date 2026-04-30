@@ -216,6 +216,15 @@ export default function RulesPage() {
             Each one also broadcasts a fake system warning blaming a random
             engineer.
           </p>
+          <div className="mb-4 px-4 py-3 rounded-lg bg-ghost/10 border border-ghost/30">
+            <p className="text-xs text-ghost-light">
+              <strong>Ghost Edit Restriction:</strong> The Ghost can edit code
+              directly but is limited to changing{" "}
+              <strong>5 lines maximum</strong> per edit. Mass deletions (Ctrl+A
+              → Delete) are also blocked. This keeps sabotage subtle and
+              strategic.
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <AbilityCard
               icon={<Bug size={16} />}

@@ -268,15 +268,25 @@ export function GameEditor({
   );
 
   const LARGE_EDIT_THRESHOLD = 50;
+  const GHOST_MAX_LINES_CHANGED = 5;
   const editBroadcastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
   const prevContentRef = useRef<string>(currentContent);
+  const [ghostEditBlocked, setGhostEditBlocked] = useState(false);
 
   // Keep prevContentRef in sync when switching files
   useEffect(() => {
     prevContentRef.current = currentContent;
   }, [activeFileId]);
+
+  // Clear ghost edit blocked message after 3 seconds
+  useEffect(() => {
+    if (ghostEditBlocked) {
+      const timer = setTimeout(() => setGhostEditBlocked(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [ghostEditBlocked]);
 
   const handleEditorChange = useCallback(
     (value: string) => {
@@ -285,8 +295,40 @@ export function GameEditor({
       // Calculate change size for edit activity tracking
       const prev = prevContentRef.current;
       const charsChanged = Math.abs(value.length - prev.length);
-      prevContentRef.current = value;
 
+      // Ghost edit restrictions
+      if (isGhost) {
+        const prevLines = prev.split("\n");
+        const newLines = value.split("\n");
+
+        // Count lines that changed
+        let linesChanged = 0;
+        const maxLen = Math.max(prevLines.length, newLines.length);
+
+        for (let i = 0; i < maxLen; i++) {
+          const prevLine = prevLines[i] || "";
+          const newLine = newLines[i] || "";
+          if (prevLine !== newLine) {
+            linesChanged++;
+          }
+        }
+
+        // Block if too many lines changed
+        if (linesChanged > GHOST_MAX_LINES_CHANGED) {
+          setGhostEditBlocked(true);
+          return;
+        }
+
+        // Block mass deletion (>80% of content deleted)
+        const deletionRatio =
+          prev.length > 0 ? (prev.length - value.length) / prev.length : 0;
+        if (deletionRatio > 0.8 && prev.length > 50) {
+          setGhostEditBlocked(true);
+          return;
+        }
+      }
+
+      prevContentRef.current = value;
       updateContent(activeFileId, value);
 
       // Debounce edit-activity broadcast (500ms) to avoid spam on every keystroke
@@ -331,7 +373,16 @@ export function GameEditor({
         });
       }, 500);
     },
-    [activeFileId, updateContent, isFileUnlocked, files, broadcast, self],
+    [
+      activeFileId,
+      updateContent,
+      isFileUnlocked,
+      files,
+      broadcast,
+      self,
+      isGhost,
+      others,
+    ],
   );
 
   const handleCursorMove = useCallback(
@@ -553,6 +604,18 @@ export function GameEditor({
               <div className="flex items-center gap-3 px-5 py-2.5 rounded-lg bg-surface border border-border text-text-muted text-xs">
                 <Lock size={16} className="text-accent-soft" />
                 Unlocks at Stage {activeFile.stage}
+              </div>
+            </div>
+          )}
+
+          {/* Ghost edit restriction notification */}
+          {ghostEditBlocked && isGhost && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-ghost/90 backdrop-blur-sm border border-ghost-light text-surface-deep text-xs font-medium shadow-lg">
+                <Ban size={14} />
+                <span>
+                  Edit blocked: Max {GHOST_MAX_LINES_CHANGED} lines per change
+                </span>
               </div>
             </div>
           )}
